@@ -29,3 +29,13 @@ impl Particle {
         )
     }
 }
+
+pub struct Spawner {
+    pub pos: (u32, u32),
+    pub spawn_limit: u32,
+    pub spawn_delay: f64,
+    pub initial_vel: Vec2,
+    pub color: Color,
+    pub next_spawn: f64,
+}
+

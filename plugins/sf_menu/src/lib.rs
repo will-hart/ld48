@@ -4,7 +4,7 @@ use rand::Rng;
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::Particle,
+    entity::{Particle, Spawner},
     input::InputState,
     map::Map,
     GameState,
@@ -20,7 +20,8 @@ impl Plugin for MenuPlugin {
             SystemSet::on_update(GameState::Menu)
                 .with_system(menu_sand_spawner.system())
                 .with_system(sand_updater.system())
-                .with_system(destroy_on_click.system()),
+                .with_system(destroy_on_click.system())
+                .with_system(spawner_emission.system()),
         )
         .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_map.system()))
         .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));
@@ -76,6 +77,15 @@ pub fn spawn_map(
 
         map.spawn_entity(&dims, particle, entity);
     }
+
+    commands.spawn().insert(Spawner {
+        pos: (60, 90),
+        spawn_limit: 1000,
+        initial_vel: Vec2::new(0., -1.),
+        color: colours.sand,
+        spawn_delay: 0.05,
+        next_spawn: 0.,
+    });
 }
 
 pub fn menu_sand_spawner(
@@ -189,5 +199,44 @@ pub fn destroy_on_click(
             // despawn the entity
             commands.entity(entity).despawn();
         }
+    }
+}
+
+pub fn spawner_emission(
+    mut commands: Commands,
+    time: Res<Time>,
+    dims: Res<Dims>,
+    mut map: ResMut<Map>,
+    mut spawners: Query<(&mut Spawner, Entity)>,
+) {
+    let now = time.seconds_since_startup();
+    for (mut spawner, ent) in spawners.iter_mut() {
+        if spawner.spawn_limit == 0 {
+            println!("Spawner depleted");
+            commands.entity(ent).despawn();
+            continue;
+        }
+
+        if now < spawner.next_spawn {
+            continue;
+        }
+
+        if let Some(_) = map.get(spawner.pos.0, spawner.pos.1) {
+            continue;
+        }
+
+        spawner.spawn_limit -= 1;
+        spawner.next_spawn = now + spawner.spawn_delay;
+
+        let particle = Particle {
+            pos: Vec2::new(spawner.pos.0 as f32, spawner.pos.1 as f32),
+            vel: spawner.initial_vel.clone(),
+            color: spawner.color.clone(),
+            is_static: false,
+            next_update: 0.,
+        };
+        let entity = commands.spawn().insert(particle).id();
+
+        map.spawn_entity(&dims, particle, entity);
     }
 }
