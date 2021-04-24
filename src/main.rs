@@ -5,7 +5,10 @@
 use bevy::{prelude::*, render::texture::TextureFormat};
 use bevy::{render::texture::Extent3d, DefaultPlugins};
 
-use sf_core::{colors::Colors, dims::Dims};
+use sf_core::{
+    colors::{to_u8s, Colors},
+    dims::Dims,
+};
 
 const WINDOW_HEIGHT: u32 = 800;
 const WINDOW_WIDTH: u32 = 800;
@@ -35,7 +38,7 @@ fn setup(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
-    // colours: Res<Colors>,
+    colours: Res<Colors>,
 ) {
     commands
         .spawn()
@@ -44,22 +47,22 @@ fn setup(
     let dims: Dims = (WINDOW_WIDTH, WINDOW_HEIGHT, TEXTURE_STRIDE).into();
     commands.insert_resource(dims);
 
-    let texture = Texture::new(
-        Extent3d::new(dims.tex_w, dims.tex_h, 4),
+    let mut texture = Texture::new(
+        Extent3d::new(dims.tex_w, dims.tex_h, 1),
         bevy::render::texture::TextureDimension::D2,
-        vec![120u8; 4 * dims.texture_values()],
+        vec![0; dims.texture_values()],
         TEXTURE_TYPE,
     );
 
-    // let sand = to_u8s(colours.sand);
+    let bg = to_u8s(colours.menu);
 
-    // for x in 0..dims.tex_w {
-    //     for y in 0..dims.tex_h {
-    //         for (pixel, idx) in dims.to_range(x, y).enumerate() {
-    //             texture.data[idx] = sand[pixel];
-    //         }
-    //     }
-    // }
+    for x in 0..dims.tex_w {
+        for y in 0..dims.tex_h {
+            for (pixel, idx) in dims.to_range(x, y).enumerate() {
+                texture.data[idx] = bg[pixel];
+            }
+        }
+    }
 
     let th = textures.add(texture);
     let material = materials.add(th.into());

@@ -9,7 +9,7 @@ pub struct Colors {
 impl Default for Colors {
     fn default() -> Self {
         Colors {
-            menu: Color::rgb(41. / 255., 48. / 255., 56. / 255.),
+            menu: Color::rgb(10. / 255., 12. / 255., 15. / 255.),
             walls: Color::rgb(72. / 255., 49. / 255., 25. / 255.),
             sand: Color::rgb(218. / 255., 157. / 255., 82. / 255.),
         }

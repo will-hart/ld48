@@ -28,7 +28,7 @@ impl Dims {
 
     pub fn to_range(&self, x: u32, y: u32) -> Range<usize> {
         let offset = self.to_tex_index(x, y);
-        offset..offset + 3
+        offset..offset + 4
     }
 
     pub fn texture_values(&self) -> usize {
