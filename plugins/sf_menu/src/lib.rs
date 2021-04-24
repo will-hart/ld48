@@ -4,7 +4,7 @@ use lighting::{point_lighting, LightingStatus};
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::{Particle, Sink, Spawner},
+    entity::{Particle, ParticleType, Sink, Spawner},
     input::InputState,
     map::Map,
     GameState, StaticEntity,
@@ -60,6 +60,7 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 50.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
+            particle_type: ParticleType::Obstacle,
             next_update: f64::MAX,
         };
         let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
@@ -72,6 +73,7 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 75.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
+            particle_type: ParticleType::Obstacle,
             next_update: f64::MAX,
         };
         let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
@@ -84,6 +86,7 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 80.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
+            particle_type: ParticleType::Obstacle,
             next_update: f64::MAX,
         };
         let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
@@ -98,6 +101,7 @@ pub fn spawn_map(
         color: colours.sand,
         spawn_delay: 0.05,
         next_spawn: 0.,
+        particle_type: ParticleType::Sand,
     });
 
     commands.spawn().insert(Sink {
@@ -228,6 +232,7 @@ pub fn spawner_emission(
             pos: Vec2::new(spawner.pos.0 as f32, spawner.pos.1 as f32),
             vel: spawner.initial_vel.clone(),
             color: spawner.color.clone(),
+            particle_type: spawner.particle_type,
             next_update: 0.,
         };
         let entity = commands.spawn().insert(particle).id();

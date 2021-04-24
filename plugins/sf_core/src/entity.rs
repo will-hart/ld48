@@ -1,10 +1,18 @@
 use bevy::prelude::{Color, Vec2};
 
+#[derive(Debug, Copy, Clone)]
+pub enum ParticleType {
+    Obstacle,
+    Trap,
+    Sand,
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct Particle {
     pub pos: Vec2,
     pub vel: Vec2,
     pub color: Color,
+    pub particle_type: ParticleType,
     pub next_update: f64,
 }
 
@@ -36,6 +44,7 @@ pub struct Spawner {
     pub initial_vel: Vec2,
     pub color: Color,
     pub next_spawn: f64,
+    pub particle_type: ParticleType,
 }
 
 pub struct Sink {
