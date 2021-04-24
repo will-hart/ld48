@@ -11,7 +11,7 @@ impl Default for Colors {
         Colors {
             menu: Color::rgb(10. / 255., 12. / 255., 15. / 255.),
             walls: Color::rgb(9. / 255., 9. / 255., 11. / 255.),
-            sand: Color::rgb(45. / 255., 195. / 255., 105. / 255.),
+            sand: Color::rgb(0.1, 1., 0.3),
         }
     }
 }

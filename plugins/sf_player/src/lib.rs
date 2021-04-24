@@ -45,6 +45,7 @@ fn spawn_player(
             transform: player_tx,
             ..Default::default()
         })
+        .insert(LightingTarget)
         .insert(Timer::from_seconds(0.5, true))
         .insert(Player {
             pos: player_pos,
@@ -53,8 +54,7 @@ fn spawn_player(
             next_update: 0.,
             slime_collected: 0,
             lighting_strength: 15,
-        })
-        .insert(LightingTarget);
+        });
 
     state.set(GameState::Playing).unwrap();
 }
