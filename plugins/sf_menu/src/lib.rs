@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use lighting::point_lighting;
 use rand::Rng;
 
 use sf_core::{
@@ -10,9 +11,12 @@ use sf_core::{
     GameState,
 };
 
+pub mod lighting;
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
 enum MenuStage {
     Movement,
+    Spawning,
 }
 
 const SPAWN_RATE: f64 = 20.;
@@ -27,7 +31,13 @@ impl Plugin for MenuPlugin {
                 .with_system(sink_consumption.system().before(MenuStage::Movement))
                 .with_system(sand_updater.system().label(MenuStage::Movement))
                 .with_system(menu_sand_spawner.system().after(MenuStage::Movement))
-                .with_system(spawner_emission.system().after(MenuStage::Movement)),
+                .with_system(
+                    spawner_emission
+                        .system()
+                        .label(MenuStage::Spawning)
+                        .after(MenuStage::Movement),
+                )
+                .with_system(point_lighting.system().after(MenuStage::Spawning)),
         )
         .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_map.system()))
         .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));

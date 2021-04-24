@@ -62,7 +62,9 @@ fn setup(
     commands.insert_resource(dims);
 
     // create the texture to display
-    let ground = to_u8s(colours.walls).to_vec();
+    let mut ground = to_u8s(colours.walls).to_vec();
+    ground.push(0);
+
     let mut initial: Vec<u8> = vec![];
     let bounds = dims.texture_values() / 4;
     for _ in 0..bounds {

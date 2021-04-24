@@ -39,9 +39,21 @@ impl Map {
         self.map[idx] = Some(entity);
 
         // add to the texture
+        self.set_pixel(dims, x, y, cols);
+    }
+
+    /// Sets RGB (NOT ALPHA!!) on the given
+    pub fn set_pixel(&mut self, dims: &Res<Dims>, x: u32, y: u32, col: [u8; 3]) {
         for (pixel, idx) in dims.to_range_enumerate(x, y) {
-            self.raw_texture.data[idx] = cols[pixel];
+            // set rgb
+            self.raw_texture.data[idx] = col[pixel];
         }
+    }
+
+    /// sets the alpha channel
+    pub fn set_alpha(&mut self, dims: &Res<Dims>, x: u32, y: u32, alpha: u8) {
+        let alpha_channel = dims.to_alpha_index(x, y);
+        self.raw_texture.data[alpha_channel] = alpha;
     }
 
     /// moves an entity to a new position, swapping the colours
@@ -50,7 +62,7 @@ impl Map {
         dims: &Res<Dims>,
         prev: (u32, u32),
         next: (u32, u32),
-        empty_colour: [u8; 4],
+        empty_colour: [u8; 3],
     ) {
         // update the entity mapping
         let old_idx = self.to_grid(prev.0, prev.1);
@@ -73,7 +85,7 @@ impl Map {
         }
     }
 
-    pub fn clear(&mut self, dims: Res<Dims>, clear_colour: &[u8; 4]) {
+    pub fn clear(&mut self, dims: Res<Dims>, clear_colour: &[u8; 3]) {
         // remove all entities
         let count = self.map.len();
         for n in 0..count {
@@ -84,13 +96,13 @@ impl Map {
         for x in 0..dims.tex_w {
             for y in 0..dims.tex_h {
                 for (pixel, idx) in dims.to_range_enumerate(x, y) {
-                    self.raw_texture.data[idx] = clear_colour[pixel];
+                    self.raw_texture.data[idx] = if pixel == 3 { 0 } else { clear_colour[pixel] };
                 }
             }
         }
     }
 
-    pub fn destroy_at(&mut self, x: u32, y: u32, dims: &Res<Dims>, clear_colour: &[u8; 4]) {
+    pub fn destroy_at(&mut self, x: u32, y: u32, dims: &Res<Dims>, clear_colour: &[u8; 3]) {
         let grid_idx = self.to_grid(x, y);
         self.map[grid_idx] = None;
 

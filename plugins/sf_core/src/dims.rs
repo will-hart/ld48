@@ -28,14 +28,18 @@ impl Dims {
         ((x + (self.tex_h - y - 1) * self.tex_w) * 4) as usize
     }
 
+    pub fn to_alpha_index(&self, x: u32, y: u32) -> usize {
+        self.to_tex_index(x, y) + 3
+    }
+
     pub fn to_range(&self, x: u32, y: u32) -> Range<usize> {
         let offset = self.to_tex_index(x, y);
-        offset..offset + 4
+        offset..offset + 3
     }
 
     pub fn to_range_enumerate(&self, x: u32, y: u32) -> Enumerate<std::ops::Range<usize>> {
         let offset = self.to_tex_index(x, y);
-        (offset..offset + 4).enumerate()
+        (offset..offset + 3).enumerate()
     }
 
     pub fn texture_values(&self) -> usize {

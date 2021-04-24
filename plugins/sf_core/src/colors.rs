@@ -16,11 +16,10 @@ impl Default for Colors {
     }
 }
 
-pub fn to_u8s(color: Color) -> [u8; 4] {
+pub fn to_u8s(color: Color) -> [u8; 3] {
     [
         (color.r() * 255.) as u8,
         (color.g() * 255.) as u8,
         (color.b() * 255.) as u8,
-        255,
     ]
 }
