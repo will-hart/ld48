@@ -1,6 +1,6 @@
 use bevy::prelude::{Entity, Res, Texture};
 
-use crate::{colors::to_u8s, dims::Dims, entity::WorldEntity};
+use crate::{colors::to_u8s, dims::Dims, entity::Particle};
 
 pub struct Map {
     w: u32,
@@ -29,7 +29,7 @@ impl Map {
     }
 
     /// spawns a new entity at the given position
-    pub fn spawn_entity(&mut self, dims: &Res<Dims>, particle: WorldEntity, entity: Entity) {
+    pub fn spawn_entity(&mut self, dims: &Res<Dims>, particle: Particle, entity: Entity) {
         let x = particle.pos.x.floor() as u32;
         let y = particle.pos.y.floor() as u32;
         let idx = self.to_grid(x, y);

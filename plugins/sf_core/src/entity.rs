@@ -1,7 +1,7 @@
 use bevy::prelude::{Color, Vec2};
 
 #[derive(Debug, Clone, Copy)]
-pub struct WorldEntity {
+pub struct Particle {
     pub pos: Vec2,
     pub vel: Vec2,
     pub color: Color,
@@ -9,7 +9,7 @@ pub struct WorldEntity {
     pub next_update: f64,
 }
 
-impl WorldEntity {
+impl Particle {
     pub fn move_entity(&mut self) {
         self.pos += self.vel;
     }

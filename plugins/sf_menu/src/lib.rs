@@ -4,7 +4,7 @@ use rand::Rng;
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::WorldEntity,
+    entity::Particle,
     input::InputState,
     map::Map,
     GameState,
@@ -39,7 +39,7 @@ pub fn spawn_map(
     colours: Res<Colors>,
 ) {
     for x in 50..75 {
-        let particle = WorldEntity {
+        let particle = Particle {
             pos: Vec2::new(x as f32, 50.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
@@ -52,7 +52,7 @@ pub fn spawn_map(
     }
 
     for x in 71..79 {
-        let particle = WorldEntity {
+        let particle = Particle {
             pos: Vec2::new(x as f32, 75.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
@@ -65,7 +65,7 @@ pub fn spawn_map(
     }
 
     for x in 115..130 {
-        let particle = WorldEntity {
+        let particle = Particle {
             pos: Vec2::new(x as f32, 80.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
@@ -93,7 +93,7 @@ pub fn menu_sand_spawner(
 
         // spawn!
         let random_x = rng.gen_range(0..dims.tex_w);
-        let world_entity = WorldEntity {
+        let particle = Particle {
             pos: Vec2::new(random_x as f32, (dims.tex_h - 1) as f32),
             color: colors.sand,
             vel: Vec2::new(0., -1.),
@@ -101,8 +101,8 @@ pub fn menu_sand_spawner(
             next_update: 0.,
         };
 
-        let entity = commands.spawn().insert(world_entity).id();
-        map.spawn_entity(&dims, world_entity.clone(), entity);
+        let entity = commands.spawn().insert(particle).id();
+        map.spawn_entity(&dims, particle.clone(), entity);
     }
 
     last_spawn.time += time.delta_seconds_f64();
@@ -113,7 +113,7 @@ pub fn sand_updater(
     mut map: ResMut<Map>,
     dims: Res<Dims>,
     colours: Res<Colors>,
-    mut query: Query<&mut WorldEntity>,
+    mut query: Query<&mut Particle>,
 ) {
     let empty_colour = to_u8s(colours.walls);
     let t = time.seconds_since_startup();
@@ -161,7 +161,7 @@ pub fn despawner(
     colours: Res<Colors>,
     dims: Res<Dims>,
     mut map: ResMut<Map>,
-    mut query: Query<(&WorldEntity, &Entity)>,
+    mut query: Query<(&Particle, &Entity)>,
 ) {
     for (_, &ent) in query.iter_mut() {
         commands.entity(ent).despawn();
