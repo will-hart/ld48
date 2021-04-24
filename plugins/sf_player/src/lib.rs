@@ -7,6 +7,9 @@ use sf_core::{
     GameState, LightingTarget, Player,
 };
 
+// TODO: jump acceleration
+const JUMP_SIZE: u32 = 7;
+
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
@@ -45,7 +48,7 @@ fn spawn_player(
         .insert(Timer::from_seconds(0.5, true))
         .insert(Player {
             pos: player_pos,
-            vel: (0, 0),
+            y_vel: 0,
             is_grounded: false,
             next_update: 0.,
             slime_collected: 0,
@@ -88,27 +91,44 @@ fn calculate_player_movement(
         }
         player.next_update = t + (1. / 60.);
 
+        player.is_grounded = if player.pos.1 > 3 {
+            if let Some(entity) = map.get(player.pos.0, player.pos.1 - 1) {
+                match particles.get(entity) {
+                    Ok((particle, _)) => match particle.particle_type {
+                        ParticleType::Obstacle => true,
+                        _ => false,
+                    },
+                    _ => false,
+                }
+            } else {
+                false
+            }
+        } else {
+            true
+        };
+
         let new_x = (player.pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
-        let mut new_y = player.pos.1;
+
+        // update jumping
+        // TODO: Check up for obstacles
+        if player.is_grounded {
+            if input.jump_pressed {
+                player.y_vel = JUMP_SIZE;
+            } else {
+                player.y_vel = 0;
+            }
+        }
 
         // check for downward movement
         // TODO: properly account for player sprite size, or set player sprite pivot to feet
         // TODO: Fall damage
-        if player.pos.1 > 3 {
-            if let Some(entity) = map.get(player.pos.0, player.pos.1 - 1) {
-                match particles.get(entity) {
-                    Ok((particle, _)) => match particle.particle_type {
-                        ParticleType::Obstacle => {}
-                        _ => {
-                            new_y -= 1;
-                        }
-                    },
-                    _ => {}
-                }
-            } else {
-                new_y -= 1;
-            }
-        }
+        let new_y = if player.is_grounded {
+            player.pos.1
+        } else {
+            player.pos.1 - 1
+        } + player.y_vel;
+
+        player.y_vel = player.y_vel.checked_sub(1).unwrap_or(player.y_vel);
 
         player.pos = (new_x, new_y);
 

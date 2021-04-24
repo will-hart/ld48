@@ -25,7 +25,7 @@ pub struct StaticEntity;
 
 pub struct Player {
     pub pos: (u32, u32),
-    pub vel: (u32, u32),
+    pub y_vel: u32,
     pub is_grounded: bool,
     pub next_update: f64,
     pub slime_collected: u32,
