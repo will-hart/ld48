@@ -34,10 +34,7 @@ pub fn point_lighting(
 
     match target_query.single_mut() {
         Ok((_, player)) => {
-            let coords = dims.world_to_grid(player.pos);
-
-            let x = coords.x.floor() as u32;
-            let y = coords.y.floor() as u32;
+            let (x, y) = player.pos;
 
             // apply lighting around the player
             for lx in x - x.min(LIGHT_STOP)..(x + LIGHT_STOP).min(dims.tex_w - 1) {

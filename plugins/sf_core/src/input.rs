@@ -6,9 +6,13 @@ use crate::dims::Dims;
 pub struct InputState {
     pub mouse_down: bool,
     pub cursor_pos: Vec2,
+    pub left_pressed: bool,
+    pub right_pressed: bool,
+    pub jump_pressed: bool,
 }
 
 pub fn input_capture(
+    keys: Res<Input<KeyCode>>,
     mut evr_cursor: EventReader<CursorMoved>,
     mut evr_click: EventReader<MouseButtonInput>,
     dims: Res<Dims>,
@@ -23,4 +27,11 @@ pub fn input_capture(
             input.mouse_down = ev.state.is_pressed();
         }
     }
+
+    input.left_pressed = keys.pressed(KeyCode::A) || keys.pressed(KeyCode::Left);
+    input.right_pressed = keys.pressed(KeyCode::D) || keys.pressed(KeyCode::Right);
+    input.jump_pressed = keys.pressed(KeyCode::Space)
+        || keys.pressed(KeyCode::LShift)
+        || keys.pressed(KeyCode::RShift)
+        || keys.pressed(KeyCode::Up);
 }
