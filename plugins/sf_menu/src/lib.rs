@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-use lighting::point_lighting;
-use rand::Rng;
+use lighting::{point_lighting, LightingStatus};
 
 use sf_core::{
     colors::{to_u8s, Colors},
@@ -19,18 +18,19 @@ enum MenuStage {
     Spawning,
 }
 
-const SPAWN_RATE: f64 = 20.;
-
 pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_system_set(
+        app.insert_resource(LightingStatus {
+            enabled: true,
+            disable_handled: false,
+        })
+        .add_system_set(
             SystemSet::on_update(GameState::Menu)
                 .with_system(destroy_on_click.system().before(MenuStage::Movement))
                 .with_system(sink_consumption.system().before(MenuStage::Movement))
                 .with_system(sand_updater.system().label(MenuStage::Movement))
-                .with_system(menu_sand_spawner.system().after(MenuStage::Movement))
                 .with_system(
                     spawner_emission
                         .system()
@@ -109,36 +109,6 @@ pub fn spawn_map(
         next_sink: 0.,
         sink_limit: 1000,
     });
-}
-
-pub fn menu_sand_spawner(
-    mut commands: Commands,
-    time: Res<Time>,
-    colors: Res<Colors>,
-    dims: Res<Dims>,
-    mut map: ResMut<Map>,
-    mut last_spawn: Local<LastSpawn>,
-) {
-    let mut rng = rand::thread_rng();
-
-    if rng.gen_bool((last_spawn.time * SPAWN_RATE).clamp(0., 1.)) {
-        last_spawn.time = 0.; // reset timer
-
-        // spawn!
-        let random_x = rng.gen_range(0..dims.tex_w);
-        let particle = Particle {
-            pos: Vec2::new(random_x as f32, (dims.tex_h - 1) as f32),
-            color: colors.sand,
-            vel: Vec2::new(0., -1.),
-            is_static: false,
-            next_update: 0.,
-        };
-
-        let entity = commands.spawn().insert(particle).id();
-        map.spawn_entity(&dims, particle.clone(), entity);
-    }
-
-    last_spawn.time += time.delta_seconds_f64();
 }
 
 pub fn sand_updater(

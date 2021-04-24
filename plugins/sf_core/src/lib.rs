@@ -7,6 +7,7 @@ pub mod dims;
 pub mod entity;
 pub mod input;
 pub mod map;
+pub mod player;
 pub mod render;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
