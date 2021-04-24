@@ -90,7 +90,7 @@ impl Map {
         }
     }
 
-    pub fn destroy_at(&mut self, x: u32, y: u32, dims: Res<Dims>, clear_colour: &[u8; 4]) {
+    pub fn destroy_at(&mut self, x: u32, y: u32, dims: &Res<Dims>, clear_colour: &[u8; 4]) {
         let grid_idx = self.to_grid(x, y);
         self.map[grid_idx] = None;
 

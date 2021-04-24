@@ -4,11 +4,16 @@ use rand::Rng;
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::{Particle, Spawner},
+    entity::{Particle, Sink, Spawner},
     input::InputState,
     map::Map,
     GameState,
 };
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
+enum MenuStage {
+    Movement,
+}
 
 const SPAWN_RATE: f64 = 20.;
 
@@ -18,10 +23,11 @@ impl Plugin for MenuPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.add_system_set(
             SystemSet::on_update(GameState::Menu)
-                .with_system(menu_sand_spawner.system())
-                .with_system(sand_updater.system())
-                .with_system(destroy_on_click.system())
-                .with_system(spawner_emission.system()),
+                .with_system(destroy_on_click.system().before(MenuStage::Movement))
+                .with_system(sink_consumption.system().before(MenuStage::Movement))
+                .with_system(sand_updater.system().label(MenuStage::Movement))
+                .with_system(menu_sand_spawner.system().after(MenuStage::Movement))
+                .with_system(spawner_emission.system().after(MenuStage::Movement)),
         )
         .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_map.system()))
         .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));
@@ -85,6 +91,13 @@ pub fn spawn_map(
         color: colours.sand,
         spawn_delay: 0.05,
         next_spawn: 0.,
+    });
+
+    commands.spawn().insert(Sink {
+        pos: (50, 0),
+        sink_rate: 0.1,
+        next_sink: 0.,
+        sink_limit: 1000,
     });
 }
 
@@ -194,7 +207,7 @@ pub fn destroy_on_click(
 
         if let Some(entity) = map.get(x, y) {
             // clear the map at this location
-            map.destroy_at(x, y, dims, &to_u8s(colours.walls));
+            map.destroy_at(x, y, &dims, &to_u8s(colours.walls));
 
             // despawn the entity
             commands.entity(entity).despawn();
@@ -238,5 +251,37 @@ pub fn spawner_emission(
         let entity = commands.spawn().insert(particle).id();
 
         map.spawn_entity(&dims, particle, entity);
+    }
+}
+
+pub fn sink_consumption(
+    mut commands: Commands,
+    time: Res<Time>,
+    dims: Res<Dims>,
+    colours: Res<Colors>,
+    mut map: ResMut<Map>,
+    mut sinks: Query<(&mut Sink, Entity)>,
+) {
+    let now = time.seconds_since_startup();
+    let clear_colour = to_u8s(colours.walls);
+
+    for (mut sink, ent) in sinks.iter_mut() {
+        if sink.sink_limit == 0 {
+            println!("Sinker depleted");
+            commands.entity(ent).despawn();
+            continue;
+        }
+
+        if now < sink.next_sink {
+            continue;
+        }
+
+        if let Some(ent) = map.get(sink.pos.0, sink.pos.1) {
+            sink.sink_limit -= 1;
+            sink.next_sink = now + sink.sink_rate;
+
+            map.destroy_at(sink.pos.0, sink.pos.1, &dims, &clear_colour);
+            commands.entity(ent).despawn();
+        }
     }
 }

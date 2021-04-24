@@ -39,3 +39,9 @@ pub struct Spawner {
     pub next_spawn: f64,
 }
 
+pub struct Sink {
+    pub pos: (u32, u32),
+    pub sink_rate: f64,
+    pub next_sink: f64,
+    pub sink_limit: u32,
+}
