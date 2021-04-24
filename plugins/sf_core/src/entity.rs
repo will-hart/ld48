@@ -5,7 +5,6 @@ pub struct Particle {
     pub pos: Vec2,
     pub vel: Vec2,
     pub color: Color,
-    pub is_static: bool,
     pub next_update: f64,
 }
 

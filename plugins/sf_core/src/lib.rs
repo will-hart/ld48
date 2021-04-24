@@ -21,12 +21,12 @@ pub struct MainTexture {
 
 pub struct MainCamera;
 pub struct LightingTarget;
+pub struct StaticEntity;
 
 pub struct Player {
     pub pos: Vec2,
     pub slime_collected: u32,
 }
-
 
 pub struct CorePlugin;
 

@@ -7,7 +7,7 @@ use sf_core::{
     entity::{Particle, Sink, Spawner},
     input::InputState,
     map::Map,
-    GameState,
+    GameState, StaticEntity,
 };
 
 pub mod lighting;
@@ -60,10 +60,9 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 50.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
-            is_static: true,
             next_update: f64::MAX,
         };
-        let entity = commands.spawn().insert(particle).id();
+        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
 
         map.spawn_entity(&dims, particle, entity);
     }
@@ -73,10 +72,9 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 75.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
-            is_static: true,
             next_update: f64::MAX,
         };
-        let entity = commands.spawn().insert(particle).id();
+        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
 
         map.spawn_entity(&dims, particle, entity);
     }
@@ -86,10 +84,9 @@ pub fn spawn_map(
             pos: Vec2::new(x as f32, 80.),
             vel: Vec2::ZERO,
             color: colours.menu.clone(),
-            is_static: true,
             next_update: f64::MAX,
         };
-        let entity = commands.spawn().insert(particle).id();
+        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
 
         map.spawn_entity(&dims, particle, entity);
     }
@@ -116,7 +113,7 @@ pub fn sand_updater(
     mut map: ResMut<Map>,
     dims: Res<Dims>,
     colours: Res<Colors>,
-    mut query: Query<&mut Particle>,
+    mut query: Query<&mut Particle, Without<StaticEntity>>,
 ) {
     let empty_colour = to_u8s(colours.walls);
     let t = time.seconds_since_startup();
@@ -180,17 +177,23 @@ pub fn destroy_on_click(
     mut map: ResMut<Map>,
     colours: Res<Colors>,
     dims: Res<Dims>,
+    static_items: Query<&Particle, With<StaticEntity>>,
 ) {
     if input.mouse_down {
         let x = input.cursor_pos.x.floor() as u32;
         let y = input.cursor_pos.y.floor() as u32;
 
         if let Some(entity) = map.get(x, y) {
-            // clear the map at this location
-            map.destroy_at(x, y, &dims, &to_u8s(colours.walls));
+            match static_items.get(entity) {
+                Ok(_) => {
+                    // clear the map at this location
+                    map.destroy_at(x, y, &dims, &to_u8s(colours.walls));
 
-            // despawn the entity
-            commands.entity(entity).despawn();
+                    // despawn the entity
+                    commands.entity(entity).despawn();
+                }
+                _ => {}
+            }
         }
     }
 }
@@ -225,7 +228,6 @@ pub fn spawner_emission(
             pos: Vec2::new(spawner.pos.0 as f32, spawner.pos.1 as f32),
             vel: spawner.initial_vel.clone(),
             color: spawner.color.clone(),
-            is_static: false,
             next_update: 0.,
         };
         let entity = commands.spawn().insert(particle).id();
