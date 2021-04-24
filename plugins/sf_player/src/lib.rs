@@ -1,5 +1,11 @@
 use bevy::{math::Vec2, prelude::*};
-use sf_core::{dims::Dims, input::InputState, GameState, LightingTarget, Player};
+use sf_core::{
+    dims::Dims,
+    entity::{Particle, ParticleType},
+    input::InputState,
+    map::Map,
+    GameState, LightingTarget, Player,
+};
 
 pub struct PlayerPlugin;
 
@@ -68,7 +74,9 @@ fn calculate_player_movement(
     time: Res<Time>,
     input: Res<InputState>,
     dims: Res<Dims>,
+    mut map: ResMut<Map>,
     mut player_query: Query<(&mut Player, &mut Transform)>,
+    particles: Query<(&Particle, Entity)>,
 ) {
     let dx: i32 = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
     let t = time.seconds_since_startup();
@@ -80,7 +88,28 @@ fn calculate_player_movement(
         player.next_update = t + (1. / 60.);
 
         let new_x = (player.pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
-        player.pos = (new_x, player.pos.1);
+        let mut new_y = player.pos.1;
+
+        // check for downward movement
+        // TODO: properly account for player sprite size, or set player sprite pivot to feet
+        if player.pos.1 > 3 {
+            println!("Check fall");
+            if let Some(entity) = map.get(player.pos.0, player.pos.1 - 1) {
+                match particles.get(entity) {
+                    Ok((particle, _)) => match particle.particle_type {
+                        ParticleType::Obstacle => {}
+                        _ => {
+                            new_y -= 1;
+                        }
+                    },
+                    _ => {}
+                }
+            } else {
+                new_y -= 1;
+            }
+        }
+
+        player.pos = (new_x, new_y);
 
         tx.translation = dims.grid_to_world(player.pos.0, player.pos.1).extend(0.);
     }
