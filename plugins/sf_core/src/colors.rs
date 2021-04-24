@@ -10,7 +10,7 @@ impl Default for Colors {
     fn default() -> Self {
         Colors {
             menu: Color::rgb(10. / 255., 12. / 255., 15. / 255.),
-            walls: Color::rgb(72. / 255., 49. / 255., 25. / 255.),
+            walls: Color::rgb(18. / 255., 12.25 / 255., 6.25 / 255.),
             sand: Color::rgb(218. / 255., 157. / 255., 82. / 255.),
         }
     }

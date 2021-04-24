@@ -4,6 +4,7 @@ use crate::{colors::to_u8s, dims::Dims, entity::WorldEntity};
 
 pub struct Map {
     w: u32,
+    h: u32,
     pub map: Vec<Option<WorldEntity>>,
     pub raw_texture: Texture,
 }
@@ -14,6 +15,7 @@ impl Map {
             map: vec![None; (dims.tex_w * dims.tex_h) as usize],
             raw_texture,
             w: dims.tex_w,
+            h: dims.tex_h,
         }
     }
 
@@ -38,10 +40,18 @@ impl Map {
     }
 
     /// moves an entity to a new position, swapping the colours
-    pub fn move_entity(&mut self, dims: &Res<Dims>, prev: (u32, u32), next: (u32, u32)) {
+    pub fn move_entity(
+        &mut self,
+        dims: &Res<Dims>,
+        prev: (u32, u32),
+        next: (u32, u32),
+        empty_colour: [u8; 4],
+    ) {
         // update the entity mapping
         let old_idx = self.to_grid(prev.0, prev.1);
         let entity = self.map[old_idx];
+        self.map[old_idx] = None;
+
         let idx = self.to_grid(next.0, next.1);
         self.map[idx] = entity;
 
@@ -52,6 +62,10 @@ impl Map {
         old_pos.zip(new_pos).for_each(|(o, n)| {
             self.raw_texture.data.swap(o, n);
         });
+
+        for (pixel, idx) in dims.to_range_enumerate(prev.0, prev.1) {
+            self.raw_texture.data[idx] = empty_colour[pixel];
+        }
     }
 
     pub fn clear(&mut self, dims: Res<Dims>, clear_colour: &[u8; 4]) {
@@ -72,6 +86,6 @@ impl Map {
     }
 
     fn to_grid(&self, x: u32, y: u32) -> usize {
-        (y * self.w + x) as usize
+        ((self.h - y - 1) * self.w + x) as usize
     }
 }
