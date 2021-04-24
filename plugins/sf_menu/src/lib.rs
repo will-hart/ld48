@@ -22,6 +22,7 @@ impl Plugin for MenuPlugin {
                 .with_system(sand_updater.system())
                 .with_system(destroy_on_click.system()),
         )
+        .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_map.system()))
         .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));
     }
 }
@@ -29,6 +30,52 @@ impl Plugin for MenuPlugin {
 #[derive(Default)]
 pub struct LastSpawn {
     pub time: f64,
+}
+
+pub fn spawn_map(
+    mut commands: Commands,
+    dims: Res<Dims>,
+    mut map: ResMut<Map>,
+    colours: Res<Colors>,
+) {
+    for x in 50..75 {
+        let particle = WorldEntity {
+            pos: Vec2::new(x as f32, 50.),
+            vel: Vec2::ZERO,
+            color: colours.menu.clone(),
+            is_static: true,
+            next_update: f64::MAX,
+        };
+        let entity = commands.spawn().insert(particle).id();
+
+        map.spawn_entity(&dims, particle, entity);
+    }
+
+    for x in 71..79 {
+        let particle = WorldEntity {
+            pos: Vec2::new(x as f32, 75.),
+            vel: Vec2::ZERO,
+            color: colours.menu.clone(),
+            is_static: true,
+            next_update: f64::MAX,
+        };
+        let entity = commands.spawn().insert(particle).id();
+
+        map.spawn_entity(&dims, particle, entity);
+    }
+
+    for x in 115..130 {
+        let particle = WorldEntity {
+            pos: Vec2::new(x as f32, 80.),
+            vel: Vec2::ZERO,
+            color: colours.menu.clone(),
+            is_static: true,
+            next_update: f64::MAX,
+        };
+        let entity = commands.spawn().insert(particle).id();
+
+        map.spawn_entity(&dims, particle, entity);
+    }
 }
 
 pub fn menu_sand_spawner(
