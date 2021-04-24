@@ -1,10 +1,8 @@
 use bevy::prelude::{Query, Res, ResMut};
-use sf_core::{dims::Dims, map::Map, player::Player};
+use sf_core::{dims::Dims, map::Map, LightingTarget, Player};
 
 const LIGHT_DISTANCE: u32 = 20;
 const LIGHT_STOP: u32 = LIGHT_DISTANCE + 5;
-
-pub struct LightingTarget;
 
 #[derive(Default)]
 pub struct LightingStatus {

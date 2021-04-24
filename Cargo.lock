@@ -1604,6 +1604,7 @@ dependencies = [
  "bevy",
  "sf_core",
  "sf_menu",
+ "sf_player",
 ]
 
 [[package]]
@@ -2186,6 +2187,16 @@ dependencies = [
  "anyhow",
  "bevy",
  "rand",
+ "sf_core",
+ "sf_player",
+]
+
+[[package]]
+name = "sf_player"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bevy",
  "sf_core",
 ]
 

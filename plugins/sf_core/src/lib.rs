@@ -7,7 +7,6 @@ pub mod dims;
 pub mod entity;
 pub mod input;
 pub mod map;
-pub mod player;
 pub mod render;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
@@ -21,6 +20,13 @@ pub struct MainTexture {
 }
 
 pub struct MainCamera;
+pub struct LightingTarget;
+
+pub struct Player {
+    pub pos: Vec2,
+    pub slime_collected: u32,
+}
+
 
 pub struct CorePlugin;
 
