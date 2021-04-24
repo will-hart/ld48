@@ -6,6 +6,7 @@ pub struct WorldEntity {
     pub vel: Vec2,
     pub color: Color,
     pub is_static: bool,
+    pub next_update: f64,
 }
 
 impl WorldEntity {

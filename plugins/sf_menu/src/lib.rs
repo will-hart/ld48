@@ -49,6 +49,7 @@ pub fn menu_sand_spawner(
             color: colors.sand,
             vel: Vec2::new(0., -1.),
             is_static: false,
+            next_update: 0.,
         };
 
         map.spawn_entity(&dims, world_entity.clone());
@@ -59,18 +60,22 @@ pub fn menu_sand_spawner(
 }
 
 pub fn sand_updater(
+    time: Res<Time>,
     mut map: ResMut<Map>,
     dims: Res<Dims>,
     colours: Res<Colors>,
     mut query: Query<&mut WorldEntity>,
 ) {
     let empty_colour = to_u8s(colours.walls);
+    let t = time.seconds_since_startup();
+    let next_t = t + 1. / 60.; // update particles at 60fps
 
     for mut particle in query.iter_mut() {
-        if particle.y() == 0 {
+        if particle.y() == 0 || t < particle.next_update {
             continue;
         }
 
+        particle.next_update = next_t;
         let pos = particle.pos.clone();
 
         let next_pos = particle.get_next_pos();
