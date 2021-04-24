@@ -49,6 +49,7 @@ fn spawn_player(
             is_grounded: false,
             next_update: 0.,
             slime_collected: 0,
+            lighting_strength: 15,
         })
         .insert(LightingTarget);
 

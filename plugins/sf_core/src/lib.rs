@@ -29,6 +29,7 @@ pub struct Player {
     pub is_grounded: bool,
     pub next_update: f64,
     pub slime_collected: u32,
+    pub lighting_strength: u32,
 }
 
 pub struct CorePlugin;
