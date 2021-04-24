@@ -31,7 +31,7 @@ fn spawn_player(
     let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(5., 11.0), 5, 1);
     let texture_atlas_handle = texture_atlases.add(texture_atlas);
 
-    let player_pos = (10, 10);
+    let player_pos = (10, 50);
     let mut player_tx = Transform::from_scale(Vec3::new(4., 4., 1.));
     player_tx.translation = dims.grid_to_world(player_pos.0, player_pos.1).extend(0.);
 
@@ -93,8 +93,8 @@ fn calculate_player_movement(
 
         // check for downward movement
         // TODO: properly account for player sprite size, or set player sprite pivot to feet
+        // TODO: Fall damage
         if player.pos.1 > 3 {
-            println!("Check fall");
             if let Some(entity) = map.get(player.pos.0, player.pos.1 - 1) {
                 match particles.get(entity) {
                     Ok((particle, _)) => match particle.particle_type {
