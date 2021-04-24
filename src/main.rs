@@ -5,13 +5,19 @@
 use bevy::{prelude::*, render::texture::TextureFormat};
 use bevy::{render::texture::Extent3d, DefaultPlugins};
 
-use sf_core::{colors::Colors, dims::Dims, map::Map, CorePlugin, GameState, MainTexture};
+use sf_core::{
+    colors::{to_u8s, Colors},
+    dims::Dims,
+    input::InputState,
+    map::Map,
+    CorePlugin, GameState, MainCamera, MainTexture,
+};
 use sf_menu::MenuPlugin;
 
 const WINDOW_WIDTH: u32 = 1200;
 const WINDOW_HEIGHT: u32 = 800;
 
-const TEXTURE_STRIDE: u32 = 4;
+const TEXTURE_STRIDE: u32 = 8;
 const TEXTURE_TYPE: TextureFormat = TextureFormat::Rgba8Unorm;
 
 fn main() {
@@ -22,6 +28,7 @@ fn main() {
     app.add_state(GameState::Menu)
         .insert_resource(ClearColor(colors.menu))
         .insert_resource(colors)
+        .insert_resource(InputState::default())
         .insert_resource(WindowDescriptor {
             width: WINDOW_WIDTH as f32,
             height: WINDOW_HEIGHT as f32,
@@ -42,21 +49,30 @@ fn setup(
     mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
+    colours: Res<Colors>,
 ) {
     // spawn a camera
     commands
         .spawn()
-        .insert_bundle(OrthographicCameraBundle::new_2d());
+        .insert_bundle(OrthographicCameraBundle::new_2d())
+        .insert(MainCamera);
 
     // configure the window/texture dimensions
     let dims: Dims = (WINDOW_WIDTH, WINDOW_HEIGHT, TEXTURE_STRIDE).into();
     commands.insert_resource(dims);
 
     // create the texture to display
+    let ground = to_u8s(colours.walls).to_vec();
+    let mut initial: Vec<u8> = vec![];
+    let bounds = dims.texture_values() / 4;
+    for _ in 0..bounds {
+        initial.append(&mut ground.clone());
+    }
+
     let texture = Texture::new(
         Extent3d::new(dims.tex_w, dims.tex_h, 1),
         bevy::render::texture::TextureDimension::D2,
-        vec![0; dims.texture_values()],
+        initial,
         TEXTURE_TYPE,
     );
 

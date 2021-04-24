@@ -1,11 +1,11 @@
-use bevy::prelude::{Res, Texture};
+use bevy::prelude::{Entity, Res, Texture};
 
 use crate::{colors::to_u8s, dims::Dims, entity::WorldEntity};
 
 pub struct Map {
     w: u32,
     h: u32,
-    pub map: Vec<Option<WorldEntity>>,
+    pub map: Vec<Option<Entity>>,
     pub raw_texture: Texture,
 }
 
@@ -19,16 +19,21 @@ impl Map {
         }
     }
 
-    pub fn get(&mut self, x: u32, y: u32) -> Option<WorldEntity> {
-        self.map[self.to_grid(x, y)]
+    pub fn get(&mut self, x: u32, y: u32) -> Option<Entity> {
+        if y >= self.h || x >= self.w {
+            // safety checks failed
+            return None;
+        }
+        let grid_idx = self.to_grid(x, y);
+        self.map[grid_idx]
     }
 
     /// spawns a new entity at the given position
-    pub fn spawn_entity(&mut self, dims: &Res<Dims>, entity: WorldEntity) {
-        let x = entity.pos.x.floor() as u32;
-        let y = entity.pos.y.floor() as u32;
+    pub fn spawn_entity(&mut self, dims: &Res<Dims>, particle: WorldEntity, entity: Entity) {
+        let x = particle.pos.x.floor() as u32;
+        let y = particle.pos.y.floor() as u32;
         let idx = self.to_grid(x, y);
-        let cols = to_u8s(entity.color);
+        let cols = to_u8s(particle.color);
 
         // add to the map
         self.map[idx] = Some(entity);
@@ -82,6 +87,15 @@ impl Map {
                     self.raw_texture.data[idx] = clear_colour[pixel];
                 }
             }
+        }
+    }
+
+    pub fn destroy_at(&mut self, x: u32, y: u32, dims: Res<Dims>, clear_colour: &[u8; 4]) {
+        let grid_idx = self.to_grid(x, y);
+        self.map[grid_idx] = None;
+
+        for (pixel, idx) in dims.to_range_enumerate(x, y) {
+            self.raw_texture.data[idx] = clear_colour[pixel];
         }
     }
 

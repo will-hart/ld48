@@ -5,6 +5,7 @@ use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
     entity::WorldEntity,
+    input::InputState,
     map::Map,
     GameState,
 };
@@ -18,7 +19,8 @@ impl Plugin for MenuPlugin {
         app.add_system_set(
             SystemSet::on_update(GameState::Menu)
                 .with_system(menu_sand_spawner.system())
-                .with_system(sand_updater.system()),
+                .with_system(sand_updater.system())
+                .with_system(destroy_on_click.system()),
         )
         .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));
     }
@@ -52,8 +54,8 @@ pub fn menu_sand_spawner(
             next_update: 0.,
         };
 
-        map.spawn_entity(&dims, world_entity.clone());
-        commands.spawn().insert(world_entity);
+        let entity = commands.spawn().insert(world_entity).id();
+        map.spawn_entity(&dims, world_entity.clone(), entity);
     }
 
     last_spawn.time += time.delta_seconds_f64();
@@ -120,4 +122,25 @@ pub fn despawner(
 
     let bg = to_u8s(colours.menu);
     map.clear(dims, &bg);
+}
+
+pub fn destroy_on_click(
+    mut commands: Commands,
+    input: Res<InputState>,
+    mut map: ResMut<Map>,
+    colours: Res<Colors>,
+    dims: Res<Dims>,
+) {
+    if input.mouse_down {
+        let x = input.cursor_pos.x.floor() as u32;
+        let y = input.cursor_pos.y.floor() as u32;
+
+        if let Some(entity) = map.get(x, y) {
+            // clear the map at this location
+            map.destroy_at(x, y, dims, &to_u8s(colours.walls));
+
+            // despawn the entity
+            commands.entity(entity).despawn();
+        }
+    }
 }

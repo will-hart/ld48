@@ -1,5 +1,7 @@
 use std::{iter::Enumerate, ops::Range};
 
+use bevy::math::Vec2;
+
 #[derive(Copy, Clone)]
 pub struct Dims {
     pub tex_w: u32,
@@ -38,5 +40,12 @@ impl Dims {
 
     pub fn texture_values(&self) -> usize {
         (4 * self.tex_h * self.tex_w) as usize
+    }
+
+    pub fn screen_to_grid(&self, pos: Vec2) -> Vec2 {
+        Vec2::new(
+            self.tex_w as f32 * (pos.x / (self.win_w as f32)),
+            self.tex_h as f32 * (pos.y / (self.win_h as f32)),
+        )
     }
 }
