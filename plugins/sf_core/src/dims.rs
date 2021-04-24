@@ -1,4 +1,4 @@
-use std::ops::Range;
+use std::{iter::Enumerate, ops::Range};
 
 #[derive(Copy, Clone)]
 pub struct Dims {
@@ -29,6 +29,11 @@ impl Dims {
     pub fn to_range(&self, x: u32, y: u32) -> Range<usize> {
         let offset = self.to_tex_index(x, y);
         offset..offset + 4
+    }
+
+    pub fn to_range_enumerate(&self, x: u32, y: u32) -> Enumerate<std::ops::Range<usize>> {
+        let offset = self.to_tex_index(x, y);
+        (offset..offset + 4).enumerate()
     }
 
     pub fn texture_values(&self) -> usize {
