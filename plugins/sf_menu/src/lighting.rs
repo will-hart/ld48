@@ -16,12 +16,13 @@ pub fn point_lighting(
     mut status: ResMut<LightingStatus>,
     mut target_query: Query<(&LightingTarget, &Player)>,
 ) {
-    if status.enabled {
+    if !status.enabled {
         if status.disable_handled {
             return;
         }
 
         // disable lighting
+        println!("Disabling lighting");
         for lx in 0..dims.tex_w {
             for ly in 0..dims.tex_h {
                 map.set_alpha(&dims, lx, ly, 255);
@@ -33,8 +34,10 @@ pub fn point_lighting(
 
     match target_query.single_mut() {
         Ok((_, player)) => {
-            let x = player.pos.x.floor() as u32;
-            let y = player.pos.y.floor() as u32;
+            let coords = dims.world_to_grid(player.pos);
+
+            let x = coords.x.floor() as u32;
+            let y = coords.y.floor() as u32;
 
             // apply lighting around the player
             for lx in x - x.min(LIGHT_STOP)..(x + LIGHT_STOP).min(dims.tex_w - 1) {

@@ -27,7 +27,7 @@ impl Plugin for MenuPlugin {
             disable_handled: false,
         })
         .add_system_set(
-            SystemSet::on_update(GameState::Menu)
+            SystemSet::on_update(GameState::Playing)
                 .with_system(destroy_on_click.system().before(MenuStage::Movement))
                 .with_system(sink_consumption.system().before(MenuStage::Movement))
                 .with_system(sand_updater.system().label(MenuStage::Movement))
@@ -39,8 +39,8 @@ impl Plugin for MenuPlugin {
                 )
                 .with_system(point_lighting.system().after(MenuStage::Spawning)),
         )
-        .add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_map.system()))
-        .add_system_set(SystemSet::on_exit(GameState::Menu).with_system(despawner.system()));
+        .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_map.system()))
+        .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(despawner.system()));
     }
 }
 
