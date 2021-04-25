@@ -9,6 +9,7 @@ use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
     input::InputState,
+    levels::NextLevel,
     map::Map,
     CorePlugin, GameState, MainCamera, MainTexture,
 };
@@ -38,9 +39,9 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
-        .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
-        .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
+        // .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
+        // .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
+        // .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
         .add_startup_system(setup.system())
         .add_plugin(CorePlugin)
         .add_plugin(PlayerPlugin)
@@ -50,10 +51,14 @@ fn main() {
 
 fn setup(
     mut commands: Commands,
+    mut state: ResMut<State<GameState>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
     colours: Res<Colors>,
 ) {
+    // trigger level loading
+    commands.spawn().insert(NextLevel(1));
+
     // spawn a camera
     commands
         .spawn()
@@ -98,4 +103,7 @@ fn setup(
     // create the map to track entities
     let map = Map::new(dims, texture);
     commands.insert_resource(map);
+
+    // move to loading state
+    state.set(GameState::Loading).unwrap();
 }

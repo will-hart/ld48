@@ -6,12 +6,14 @@ pub mod colors;
 pub mod dims;
 pub mod entity;
 pub mod input;
+pub mod levels;
 pub mod map;
 pub mod render;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum GameState {
     Menu,
+    Loading,
     Playing,
 }
 

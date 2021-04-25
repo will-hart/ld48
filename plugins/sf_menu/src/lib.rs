@@ -9,7 +9,6 @@ use sf_core::{
     GameState, StaticEntity,
 };
 
-pub mod levels;
 pub mod lighting;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
@@ -26,7 +25,6 @@ impl Plugin for MenuPlugin {
             enabled: true,
             disable_handled: false,
         })
-        .insert_resource(levels::NextLevel(1))
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
                 .with_system(sink_consumption.system().before(MenuStage::Movement))
@@ -38,9 +36,6 @@ impl Plugin for MenuPlugin {
                         .after(MenuStage::Movement),
                 )
                 .with_system(point_lighting.system().after(MenuStage::Spawning)),
-        )
-        .add_system_set(
-            SystemSet::on_enter(GameState::Playing).with_system(levels::spawn_level.system()),
         )
         .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(despawner.system()));
     }

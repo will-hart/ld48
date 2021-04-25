@@ -3,6 +3,7 @@ use sf_core::{
     dims::Dims,
     entity::{Particle, ParticleType},
     input::InputState,
+    levels::spawn_level,
     map::Map,
     GameState, LightingTarget, Player,
 };
@@ -20,25 +21,31 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::AppBuilder) {
-        app.add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_player.system()))
-            .add_system_set(
-                SystemSet::on_update(GameState::Playing)
-                    .with_system(
-                        calculate_player_movement
-                            .system()
-                            .label("calculate_player_movement"),
-                    )
-                    .with_system(player_sink.system().after("calculate_player_movement"))
-                    .with_system(lighting_decay.system().after("calculate_player_movement")),
-            )
-            .add_system(animate_player.system());
+        app.add_system_set(
+            SystemSet::on_enter(GameState::Loading)
+                .with_system(spawn_player.system().label("spawn_player")),
+        )
+        .add_system_set(
+            SystemSet::on_update(GameState::Loading)
+                .with_system(spawn_level.system().after("spawn_player")),
+        )
+        .add_system_set(
+            SystemSet::on_update(GameState::Playing)
+                .with_system(
+                    calculate_player_movement
+                        .system()
+                        .label("calculate_player_movement"),
+                )
+                .with_system(player_sink.system().after("calculate_player_movement"))
+                .with_system(lighting_decay.system().after("calculate_player_movement")),
+        )
+        .add_system(animate_player.system());
     }
 }
 
 fn spawn_player(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut state: ResMut<State<GameState>>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     dims: Res<Dims>,
 ) {
@@ -59,7 +66,7 @@ fn spawn_player(
             transform: player_tx,
             ..Default::default()
         })
-        // .insert(LightingTarget)
+        .insert(LightingTarget)
         .insert(Timer::from_seconds(0.5, true))
         .insert(Player {
             pos: player_pos,
@@ -78,7 +85,7 @@ fn spawn_player(
             max_light_strength: 25,
         });
 
-    state.set(GameState::Playing).unwrap();
+    println!("Spawned player");
 }
 
 fn animate_player(
