@@ -1,5 +1,5 @@
 use bevy::prelude::{Query, Res, ResMut};
-use sf_core::{dims::Dims, map::Map, LightingTarget, Player};
+use sf_core::{dims::Dims, map::Map, LightingTarget, Position};
 
 #[derive(Default)]
 pub struct LightingStatus {
@@ -7,11 +7,13 @@ pub struct LightingStatus {
     pub disable_handled: bool,
 }
 
+/// Applies a set of points lights as an alpha value.
+// TODO this should be done as a shader
 pub fn point_lighting(
     mut map: ResMut<Map>,
     dims: Res<Dims>,
     mut status: ResMut<LightingStatus>,
-    mut target_query: Query<(&LightingTarget, &Player)>,
+    mut lights: Query<(&LightingTarget, &Position)>,
 ) {
     if !status.enabled {
         if status.disable_handled {
@@ -29,10 +31,11 @@ pub fn point_lighting(
         status.disable_handled = true;
     }
 
-    match target_query.single_mut() {
-        Ok((_, player)) => {
-            let (x, y) = player.pos;
-            let lighting_strength = player.lighting_strength;
+    // for now should only be one light :(
+    match lights.single_mut() {
+        Ok((light, pos)) => {
+            let (x, y) = (pos.0, pos.1);
+            let lighting_strength = light.lighting_strength;
             let lighting_stop = (1.2 * lighting_strength as f32).ceil() as u32;
             let lighting_strength = lighting_strength * lighting_strength; //premultiply
 

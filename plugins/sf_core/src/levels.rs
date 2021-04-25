@@ -3,7 +3,7 @@ use crate::{
     dims::Dims,
     entity::{Particle, ParticleType, Spawner},
     map::Map,
-    GameState, Player, StaticEntity,
+    GameState, Player, Position, StaticEntity,
 };
 use bevy::prelude::*;
 use std::ops::Range;
@@ -39,7 +39,7 @@ impl Level {
     pub fn level_one(colours: &Res<Colors>) -> Self {
         Level {
             player_spawn: (5, 93),
-            player_slime_target: 20,
+            player_slime_target: 40,
             walls: vec![
                 Wall::from_x_range(61..63, 93),
                 Wall::from_x_range(50..75, 50),
@@ -50,7 +50,7 @@ impl Level {
             spawners: vec![Spawner {
                 pos: (62, 95),
                 spawn_limit: 40,
-                spawn_delay: 0.5,
+                spawn_delay: 0.25,
                 initial_vel: Vec2::new(0., -1.),
                 color: colours.sand.clone(),
                 next_spawn: 0.,
@@ -68,14 +68,16 @@ pub fn spawn_level(
     mut map: ResMut<Map>,
     mut state: ResMut<State<GameState>>,
     mut next_level: Query<(&NextLevel, Entity)>,
-    mut players: Query<(&mut Player, &mut Transform)>,
+    mut players: Query<(&mut Player, &mut Position, &mut Transform)>,
 ) {
     for (_, entity) in next_level.iter_mut() {
         let level = Level::level_one(&colours);
 
         // move the player to the right spawn pos and configure them
-        for (mut player, mut tx) in players.iter_mut() {
-            player.pos = level.player_spawn;
+        for (mut player, mut pos, mut tx) in players.iter_mut() {
+            pos.0 = level.player_spawn.0;
+            pos.1 = level.player_spawn.1;
+
             player.slime_target = level.player_slime_target;
 
             tx.translation = dims

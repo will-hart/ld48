@@ -50,6 +50,12 @@ impl Map {
         }
     }
 
+    /// gets the current alpha channel value at the given location
+    pub fn get_alpha(&mut self, dims: &Res<Dims>, x: u32, y: u32) -> u8 {
+        let alpha_channel = dims.to_alpha_index(x, y);
+        self.raw_texture.data[alpha_channel]
+    }
+
     /// sets the alpha channel
     pub fn set_alpha(&mut self, dims: &Res<Dims>, x: u32, y: u32, alpha: u8) {
         let alpha_channel = dims.to_alpha_index(x, y);

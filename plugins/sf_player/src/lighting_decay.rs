@@ -1,24 +1,24 @@
 // handles periodically decaying a user's lighting
 
 use bevy::prelude::*;
-use sf_core::{GameOver, Player};
+use sf_core::{GameOver, LightingTarget, Player};
 
 pub fn lighting_decay(
     mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<(&mut Player, Entity)>,
+    mut query: Query<(&mut LightingTarget, Entity), With<Player>>,
 ) {
     let t = time.seconds_since_startup();
 
-    for (mut player, entity) in query.iter_mut() {
-        if player.lighting_strength == 0 || t < player.next_lighting_decay {
+    for (mut light, entity) in query.iter_mut() {
+        if light.lighting_strength == 0 || t < light.next_lighting_decay {
             continue;
         }
 
-        player.next_lighting_decay = player.lighting_decay_rate + t;
-        player.lighting_strength -= 1;
+        light.next_lighting_decay = light.lighting_decay_rate + t;
+        light.lighting_strength -= 1;
 
-        if player.lighting_strength == 0 {
+        if light.lighting_strength == 0 {
             println!("GAME OVER");
             commands.entity(entity).insert(GameOver);
         }

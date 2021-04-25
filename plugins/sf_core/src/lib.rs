@@ -24,12 +24,12 @@ pub struct MainTexture {
 // marker structs
 
 pub struct MainCamera;
-pub struct LightingTarget;
 pub struct StaticEntity;
 pub struct GameOver;
 
+pub struct Position(pub u32, pub u32);
+
 pub struct Player {
-    pub pos: (u32, u32),
     pub y_vel: u32,
     pub is_grounded: bool,
     pub next_update: f64,
@@ -37,7 +37,8 @@ pub struct Player {
     pub sink_rate: f64,
     pub slime_target: u32,
     pub next_sink: f64,
-
+}
+pub struct LightingTarget {
     pub lighting_strength: u32,
     pub lighting_decay_rate: f64,
     pub next_lighting_decay: f64,
