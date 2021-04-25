@@ -28,8 +28,8 @@ pub fn player_sink(
 
         let (x, y) = player.pos;
 
-        for &dx in &[-1i32, 0, 1] {
-            for &dy in &[-1i32, 0, 1] {
+        for &dx in &[0i32, -1, 1] {
+            for &dy in &[0i32, -1, 1] {
                 // check lower bounds
                 if (dx == -1 && x == 0) || (dy == -1 && y == 0) {
                     continue;
@@ -61,6 +61,9 @@ pub fn player_sink(
                             }
 
                             player.next_sink = t + player.sink_rate;
+
+                            // only sink one particle
+                            break;
                         }
                         Err(_) => {}
                     },

@@ -66,7 +66,7 @@ fn spawn_player(
             next_update: 0.,
 
             slime_collected: 0,
-            sink_rate: 1., // 1 per second
+            sink_rate: 1. / 5., // 5 per second
             next_sink: 0.,
 
             lighting_strength: 15,
