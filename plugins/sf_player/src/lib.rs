@@ -7,7 +7,10 @@ use sf_core::{
     GameState, LightingTarget, Player,
 };
 
+mod lighting_decay;
 mod player_sink;
+
+use lighting_decay::lighting_decay;
 use player_sink::player_sink;
 
 // TODO: jump acceleration
@@ -25,7 +28,8 @@ impl Plugin for PlayerPlugin {
                             .system()
                             .label("calculate_player_movement"),
                     )
-                    .with_system(player_sink.system().after("calculate_player_movement")),
+                    .with_system(player_sink.system().after("calculate_player_movement"))
+                    .with_system(lighting_decay.system().after("calculate_player_movement")),
             )
             .add_system(animate_player.system());
     }
@@ -62,6 +66,8 @@ fn spawn_player(
             next_update: 0.,
             slime_collected: 0,
             lighting_strength: 15,
+            lighting_decay_rate: 10.,
+            next_lighting_decay: 0.,
         });
 
     state.set(GameState::Playing).unwrap();

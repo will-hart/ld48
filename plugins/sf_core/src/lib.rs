@@ -19,9 +19,12 @@ pub struct MainTexture {
     pub texture: Handle<Texture>,
 }
 
+// marker structs
+
 pub struct MainCamera;
 pub struct LightingTarget;
 pub struct StaticEntity;
+pub struct GameOver;
 
 pub struct Player {
     pub pos: (u32, u32),
@@ -29,7 +32,10 @@ pub struct Player {
     pub is_grounded: bool,
     pub next_update: f64,
     pub slime_collected: u32,
+
     pub lighting_strength: u32,
+    pub lighting_decay_rate: f64,
+    pub next_lighting_decay: f64,
 }
 
 pub struct CorePlugin;

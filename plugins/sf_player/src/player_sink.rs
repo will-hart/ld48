@@ -28,9 +28,16 @@ pub fn player_sink(
                 match map.get(dx as u32, dy as u32) {
                     Some(ent) => match particles.get(ent) {
                         Ok((_, ent)) => {
+                            // remove the slime
                             map.destroy_at(dx as u32, dy as u32, &dims, &clear_colour);
                             commands.entity(ent).despawn();
+
+                            // increment the player lighting
                             player.slime_collected += 1;
+
+                            if player.slime_collected % 10 == 0 {
+                                player.lighting_strength += 1;
+                            }
                         }
                         Err(_) => {}
                     },
