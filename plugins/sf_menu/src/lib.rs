@@ -4,12 +4,12 @@ use lighting::{point_lighting, LightingStatus};
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::{Particle, ParticleType, Sink, Spawner},
-    input::InputState,
+    entity::{Particle, Sink, Spawner},
     map::Map,
     GameState, StaticEntity,
 };
 
+pub mod levels;
 pub mod lighting;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
@@ -28,7 +28,6 @@ impl Plugin for MenuPlugin {
         })
         .add_system_set(
             SystemSet::on_update(GameState::Playing)
-                .with_system(destroy_on_click.system().before(MenuStage::Movement))
                 .with_system(sink_consumption.system().before(MenuStage::Movement))
                 .with_system(sand_updater.system().label(MenuStage::Movement))
                 .with_system(
@@ -39,7 +38,9 @@ impl Plugin for MenuPlugin {
                 )
                 .with_system(point_lighting.system().after(MenuStage::Spawning)),
         )
-        .add_system_set(SystemSet::on_enter(GameState::Playing).with_system(spawn_map.system()))
+        .add_system_set(
+            SystemSet::on_enter(GameState::Playing).with_system(levels::spawn_level_one.system()),
+        )
         .add_system_set(SystemSet::on_exit(GameState::Playing).with_system(despawner.system()));
     }
 }
@@ -47,69 +48,6 @@ impl Plugin for MenuPlugin {
 #[derive(Default)]
 pub struct LastSpawn {
     pub time: f64,
-}
-
-pub fn spawn_map(
-    mut commands: Commands,
-    dims: Res<Dims>,
-    mut map: ResMut<Map>,
-    colours: Res<Colors>,
-) {
-    for x in 50..75 {
-        let particle = Particle {
-            pos: Vec2::new(x as f32, 50.),
-            vel: Vec2::ZERO,
-            color: colours.menu.clone(),
-            particle_type: ParticleType::Obstacle,
-            next_update: f64::MAX,
-        };
-        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
-
-        map.spawn_entity(&dims, particle, entity);
-    }
-
-    for x in 71..79 {
-        let particle = Particle {
-            pos: Vec2::new(x as f32, 75.),
-            vel: Vec2::ZERO,
-            color: colours.menu.clone(),
-            particle_type: ParticleType::Obstacle,
-            next_update: f64::MAX,
-        };
-        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
-
-        map.spawn_entity(&dims, particle, entity);
-    }
-
-    for x in 115..130 {
-        let particle = Particle {
-            pos: Vec2::new(x as f32, 80.),
-            vel: Vec2::ZERO,
-            color: colours.menu.clone(),
-            particle_type: ParticleType::Obstacle,
-            next_update: f64::MAX,
-        };
-        let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
-
-        map.spawn_entity(&dims, particle, entity);
-    }
-
-    commands.spawn().insert(Spawner {
-        pos: (60, 90),
-        spawn_limit: 1000,
-        initial_vel: Vec2::new(0., -1.),
-        color: colours.sand,
-        spawn_delay: 0.05,
-        next_spawn: 0.,
-        particle_type: ParticleType::Sand,
-    });
-
-    commands.spawn().insert(Sink {
-        pos: (50, 0),
-        sink_rate: 0.1,
-        next_sink: 0.,
-        sink_limit: 1000,
-    });
 }
 
 pub fn sand_updater(
@@ -173,33 +111,6 @@ pub fn despawner(
 
     let bg = to_u8s(colours.menu);
     map.clear(dims, &bg);
-}
-
-pub fn destroy_on_click(
-    mut commands: Commands,
-    input: Res<InputState>,
-    mut map: ResMut<Map>,
-    colours: Res<Colors>,
-    dims: Res<Dims>,
-    static_items: Query<&Particle, With<StaticEntity>>,
-) {
-    if input.mouse_down {
-        let x = input.cursor_pos.x.floor() as u32;
-        let y = input.cursor_pos.y.floor() as u32;
-
-        if let Some(entity) = map.get(x, y) {
-            match static_items.get(entity) {
-                Ok(_) => {
-                    // clear the map at this location
-                    map.destroy_at(x, y, &dims, &to_u8s(colours.walls));
-
-                    // despawn the entity
-                    commands.entity(entity).despawn();
-                }
-                _ => {}
-            }
-        }
-    }
 }
 
 pub fn spawner_emission(
