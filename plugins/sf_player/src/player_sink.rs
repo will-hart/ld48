@@ -4,7 +4,7 @@ use sf_core::{
     dims::Dims,
     entity::Particle,
     map::Map,
-    Player,
+    Player, StaticEntity,
 };
 
 /// Removes the particles around a player
@@ -15,14 +15,14 @@ pub fn player_sink(
     dims: Res<Dims>,
     colours: Res<Colors>,
     mut players: Query<&mut Player>,
-    particles: Query<(&Particle, Entity)>,
+    particles: Query<(&Particle, Entity), Without<StaticEntity>>,
 ) {
     let t = time.seconds_since_startup();
 
-    for mut player in players.iter_mut() {
+    'player_loop: for mut player in players.iter_mut() {
         let clear_colour = to_u8s(colours.walls);
 
-        if t < player.next_sink {
+        if t < player.next_sink || player.slime_target == 0 {
             continue;
         }
 
@@ -53,9 +53,9 @@ pub fn player_sink(
                             commands.entity(ent).despawn();
 
                             // increment the player lighting
-                            player.slime_collected += 1;
+                            player.slime_target -= 1;
 
-                            if player.slime_collected % player.light_growth_rate == 0 {
+                            if player.slime_target % player.light_growth_rate == 0 {
                                 player.lighting_strength = (player.lighting_strength + 1)
                                     .clamp(0, player.max_light_strength);
                             }
@@ -63,7 +63,7 @@ pub fn player_sink(
                             player.next_sink = t + player.sink_rate;
 
                             // only sink one particle
-                            break;
+                            continue 'player_loop;
                         }
                         Err(_) => {}
                     },

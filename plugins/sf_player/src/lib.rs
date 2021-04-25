@@ -48,7 +48,9 @@ fn spawn_player(
 
     let player_pos = (10, 50);
     let mut player_tx = Transform::from_scale(Vec3::new(4., 4., 1.));
-    player_tx.translation = dims.grid_to_world(player_pos.0, player_pos.1).extend(0.);
+    player_tx.translation = dims
+        .grid_to_world(player_pos.0, player_pos.1, Vec2::new(0., 24.))
+        .extend(0.);
 
     commands
         .spawn()
@@ -57,7 +59,7 @@ fn spawn_player(
             transform: player_tx,
             ..Default::default()
         })
-        .insert(LightingTarget)
+        // .insert(LightingTarget)
         .insert(Timer::from_seconds(0.5, true))
         .insert(Player {
             pos: player_pos,
@@ -65,7 +67,7 @@ fn spawn_player(
             is_grounded: false,
             next_update: 0.,
 
-            slime_collected: 0,
+            slime_target: 0,
             sink_rate: 1. / 5., // 5 per second
             next_sink: 0.,
 
@@ -111,7 +113,7 @@ fn calculate_player_movement(
         }
         player.next_update = t + (1. / 60.);
 
-        player.is_grounded = if player.pos.1 > 3 {
+        player.is_grounded = if player.pos.1 > 0 {
             if let Some(entity) = map.get(player.pos.0, player.pos.1 - 1) {
                 match particles.get(entity) {
                     Ok((particle, _)) => match particle.particle_type {
@@ -152,6 +154,8 @@ fn calculate_player_movement(
 
         player.pos = (new_x, new_y);
 
-        tx.translation = dims.grid_to_world(player.pos.0, player.pos.1).extend(0.);
+        tx.translation = dims
+            .grid_to_world(player.pos.0, player.pos.1, Vec2::new(0., 24.))
+            .extend(0.);
     }
 }

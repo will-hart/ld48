@@ -33,7 +33,7 @@ pub struct Player {
     pub next_update: f64,
 
     pub sink_rate: f64,
-    pub slime_collected: u32,
+    pub slime_target: u32,
     pub next_sink: f64,
 
     pub lighting_strength: u32,
