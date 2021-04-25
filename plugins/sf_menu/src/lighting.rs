@@ -36,7 +36,7 @@ pub fn point_lighting(
         Ok((light, pos)) => {
             let (x, y) = (pos.0, pos.1);
             let lighting_strength = light.lighting_strength;
-            let lighting_stop = (1.2 * lighting_strength as f32).ceil() as u32;
+            let lighting_stop = (1.4 * lighting_strength as f32).ceil() as u32;
             let lighting_strength = lighting_strength * lighting_strength; //premultiply
 
             // apply lighting around the player
