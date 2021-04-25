@@ -85,19 +85,6 @@ pub fn spawn_level(
                     Vec2::new(0., 24.),
                 )
                 .extend(0.);
-
-            println!(
-                "Player spawned at grid: [{},{}], world: {} ({})",
-                player.pos.0,
-                player.pos.1,
-                tx.translation,
-                dims.grid_to_world(
-                    level.player_spawn.0,
-                    level.player_spawn.0,
-                    Vec2::new(0., 24.),
-                )
-                .extend(0.)
-            );
         }
 
         // spawn walls
