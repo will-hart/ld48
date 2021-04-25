@@ -7,6 +7,9 @@ use sf_core::{
     GameState, LightingTarget, Player,
 };
 
+mod player_sink;
+use player_sink::player_sink;
+
 // TODO: jump acceleration
 const JUMP_SIZE: u32 = 7;
 
@@ -17,7 +20,12 @@ impl Plugin for PlayerPlugin {
         app.add_system_set(SystemSet::on_enter(GameState::Menu).with_system(spawn_player.system()))
             .add_system_set(
                 SystemSet::on_update(GameState::Playing)
-                    .with_system(calculate_player_movement.system()),
+                    .with_system(
+                        calculate_player_movement
+                            .system()
+                            .label("calculate_player_movement"),
+                    )
+                    .with_system(player_sink.system().after("calculate_player_movement")),
             )
             .add_system(animate_player.system());
     }
