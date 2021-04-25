@@ -11,6 +11,7 @@ use sf_core::{
     input::InputState,
     levels::NextLevel,
     map::Map,
+    ui::spawn_ui,
     CorePlugin, GameState, MainCamera, MainTexture,
 };
 use sf_menu::MenuPlugin;
@@ -42,10 +43,11 @@ fn main() {
         // .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
-        .add_startup_system(setup.system())
         .add_plugin(CorePlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(MenuPlugin)
+        .add_startup_system(setup.system())
+        .add_startup_system(spawn_ui.system())
         .run();
 }
 
@@ -64,6 +66,8 @@ fn setup(
         .spawn()
         .insert_bundle(OrthographicCameraBundle::new_2d())
         .insert(MainCamera);
+
+    commands.spawn_bundle(UiCameraBundle::default());
 
     // configure the window/texture dimensions
     let dims: Dims = (WINDOW_WIDTH, WINDOW_HEIGHT, TEXTURE_STRIDE).into();

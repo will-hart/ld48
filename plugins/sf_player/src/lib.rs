@@ -10,6 +10,7 @@ use sf_core::{
 
 mod lighting_decay;
 mod player_sink;
+mod update_player_ui;
 
 use lighting_decay::lighting_decay;
 use player_sink::player_sink;
@@ -37,7 +38,22 @@ impl Plugin for PlayerPlugin {
                         .label("calculate_player_movement"),
                 )
                 .with_system(player_sink.system().after("calculate_player_movement"))
-                .with_system(lighting_decay.system().after("calculate_player_movement")),
+                .with_system(
+                    lighting_decay
+                        .system()
+                        .label("lighting_decay")
+                        .after("calculate_player_movement"),
+                )
+                .with_system(
+                    update_player_ui::update_player_fire
+                        .system()
+                        .after("lighting_decay"),
+                )
+                .with_system(
+                    update_player_ui::update_player_slime
+                        .system()
+                        .after("lighting_decay"),
+                ),
         )
         .add_system(animate_player.system());
     }
