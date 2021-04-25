@@ -31,11 +31,16 @@ pub struct Player {
     pub y_vel: u32,
     pub is_grounded: bool,
     pub next_update: f64,
+
+    pub sink_rate: f64,
     pub slime_collected: u32,
+    pub next_sink: f64,
 
     pub lighting_strength: u32,
     pub lighting_decay_rate: f64,
     pub next_lighting_decay: f64,
+    pub light_growth_rate: u32,
+    pub max_light_strength: u32,
 }
 
 pub struct CorePlugin;

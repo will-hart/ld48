@@ -64,10 +64,16 @@ fn spawn_player(
             y_vel: 0,
             is_grounded: false,
             next_update: 0.,
+
             slime_collected: 0,
+            sink_rate: 1., // 1 per second
+            next_sink: 0.,
+
             lighting_strength: 15,
             lighting_decay_rate: 10.,
+            light_growth_rate: 5,
             next_lighting_decay: 0.,
+            max_light_strength: 25,
         });
 
     state.set(GameState::Playing).unwrap();
