@@ -41,7 +41,7 @@ pub fn spawn_player(
             next_update: 0.,
 
             slime_target: 0,
-            sink_rate: 1. / 5., // 5 per second
+            sink_rate: 1. / 10., // 10 per second
             next_sink: 0.,
         });
 
