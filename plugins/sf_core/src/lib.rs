@@ -37,6 +37,8 @@ pub struct Player {
     pub y_vel: u32,
     pub is_grounded: bool,
     pub did_jump: bool,
+    pub jump_cooldown: isize,
+
     pub next_update: f64,
     pub frames_since_jumped: usize,
 

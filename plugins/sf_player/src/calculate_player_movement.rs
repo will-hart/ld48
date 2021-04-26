@@ -9,7 +9,8 @@ use sf_core::{
 
 // TODO: jump acceleration
 const NUM_JUMP_FRAMES: usize = 10;
-const JUMP_SIZE: [u32; NUM_JUMP_FRAMES] = [4, 3, 2, 2, 1, 1, 1, 1, 1, 1];
+const JUMP_SIZE: [u32; NUM_JUMP_FRAMES] = [2, 3, 4, 2, 2, 1, 1, 1, 1, 1];
+const JUMP_COOLDOWN: isize = 12;
 
 pub fn calculate_player_movement(
     time: Res<Time>,
@@ -40,10 +41,17 @@ pub fn calculate_player_movement(
         // update jumping
         // TODO: Check up for obstacles
         if player.is_grounded {
+            if player.frames_since_jumped > 0 {
+                // just landed
+                player.jump_cooldown = JUMP_COOLDOWN;
+            }
+
             player.frames_since_jumped = 0;
+            player.jump_cooldown -= 1;
             player.did_jump = false;
 
-            if input.jump_pressed {
+            if input.jump_pressed && player.jump_cooldown < 0 {
+                player.jump_cooldown = 0;
                 player.did_jump = true;
                 player.frames_since_jumped = 1;
                 player.y_vel = JUMP_SIZE[0];
