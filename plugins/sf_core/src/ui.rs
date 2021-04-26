@@ -40,7 +40,7 @@ pub fn spawn_ui(
                                 ..Default::default()
                             },
                             text: Text::with_section(
-                                "Find slime, don't touch the ground",
+                                "",
                                 TextStyle {
                                     font: asset_server.load("fonts/PressStart2P-Regular.ttf"),
                                     font_size: 12.,

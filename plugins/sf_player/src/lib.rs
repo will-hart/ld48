@@ -49,6 +49,11 @@ impl Plugin for PlayerPlugin {
                     update_player_ui::update_player_slime
                         .system()
                         .after("lighting_decay"),
+                )
+                .with_system(
+                    update_player_ui::update_player_message
+                        .system()
+                        .after("lighting_decay"),
                 ),
         )
         .add_system(animate_player.system());
