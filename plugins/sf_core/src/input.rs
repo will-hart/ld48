@@ -31,6 +31,7 @@ pub fn input_capture(
     input.left_pressed = keys.pressed(KeyCode::A) || keys.pressed(KeyCode::Left);
     input.right_pressed = keys.pressed(KeyCode::D) || keys.pressed(KeyCode::Right);
     input.jump_pressed = keys.pressed(KeyCode::Space)
+        || keys.pressed(KeyCode::W)
         || keys.pressed(KeyCode::LShift)
         || keys.pressed(KeyCode::RShift)
         || keys.pressed(KeyCode::Up);
