@@ -18,6 +18,7 @@ pub enum GameState {
     Loading,
     Playing,
     GameOver,
+    Victory,
 }
 
 pub struct MainTexture {

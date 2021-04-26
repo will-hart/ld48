@@ -12,13 +12,15 @@
 - [x] improve movement
 - [x] liquid slime
 - [x] flavour text / tutorials
-- [ ] 2-3 levels
-- [ ] victory condition + text
-- [ ] can't jump through floors - may require physics
+- [x] 2 levels
+- [x] victory condition + text
+- [x] can't jump through floors - may require physics
+- [ ] 3 levels
+- [ ] levels loaded from image
 - [ ] add some more interest in the background
 - [ ] make lighting a shader
+- [ ] sound effects
 - [ ] procgen levels
 - [ ] run animations
 - [ ] physics based character controller
-- [ ] sound effects
 - [ ] solid slime should fall through liquid

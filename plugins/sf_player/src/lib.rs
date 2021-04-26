@@ -89,6 +89,15 @@ impl Plugin for PlayerPlugin {
         )
         .add_system_set(
             SystemSet::on_exit(GameState::GameOver).with_system(despawn_game_over_ui.system()),
+        )
+        .add_system_set(
+            SystemSet::on_enter(GameState::Victory).with_system(spawn_game_over_ui.system()),
+        )
+        .add_system_set(
+            SystemSet::on_update(GameState::Victory).with_system(restart_game_watcher.system()),
+        )
+        .add_system_set(
+            SystemSet::on_exit(GameState::Victory).with_system(despawn_game_over_ui.system()),
         );
     }
 }

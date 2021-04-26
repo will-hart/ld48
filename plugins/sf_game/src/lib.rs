@@ -51,6 +51,9 @@ impl Plugin for GamePlugin {
         )
         .add_system_set(
             SystemSet::on_exit(GameState::Playing).with_system(despawner::despawner.system()),
+        )
+        .add_system_set(
+            SystemSet::on_enter(GameState::Victory).with_system(despawner::despawner.system()),
         );
     }
 }

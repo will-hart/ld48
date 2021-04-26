@@ -27,7 +27,7 @@ pub fn spawn_player(
         .insert(LightingTarget {
             lighting_strength: 15,
             lighting_decay_rate: 10.,
-            light_growth_rate: 5,
+            light_growth_rate: 20,
             next_lighting_decay: 0.,
             max_light_strength: 25,
         })

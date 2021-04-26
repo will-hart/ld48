@@ -23,6 +23,7 @@ pub fn restart_game_watcher(
 pub fn spawn_game_over_ui(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    state: Res<State<GameState>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands
@@ -45,7 +46,11 @@ pub fn spawn_game_over_ui(
                     ..Default::default()
                 },
                 text: Text::with_section(
-                    "GAME OVER",
+                    match state.current() {
+                        GameState::GameOver => "GAME OVER",
+                        GameState::Victory => "You won!",
+                        _ => "Huh?",
+                    },
                     TextStyle {
                         font: asset_server.load("fonts/PressStart2P-Regular.ttf"),
                         font_size: 16.,
