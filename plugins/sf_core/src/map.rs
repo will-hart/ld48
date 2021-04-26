@@ -19,6 +19,62 @@ impl Map {
         }
     }
 
+    /// Returns a grid around the given cell, which is true if the grid is unoccupied, false otherwise
+    /// numbering is [top left, top mid, top right, mid left, mid mid, mid right, bottom left, bottom mid, bottom right]
+    pub fn test_free_neighbours(&mut self, x: u32, y: u32) -> [bool; 9] {
+        [
+            if x > 0 && y < self.h - 1 {
+                self.get(x - 1, y + 1).is_none()
+            } else {
+                false
+            },
+            //
+            if y < self.h - 1 {
+                self.get(x, y + 1).is_none()
+            } else {
+                false
+            },
+            //
+            if x < self.w - 1 && y < self.h - 1 {
+                self.get(x + 1, y + 1).is_none()
+            } else {
+                false
+            },
+            //
+            if x > 0 {
+                self.get(x - 1, y).is_none()
+            } else {
+                false
+            },
+            //
+            false,
+            //
+            if x < self.w - 1 {
+                self.get(x + 1, y).is_none()
+            } else {
+                false
+            },
+            //
+            if x > 0 && y > 0 {
+                self.get(x - 1, y - 1).is_none()
+            } else {
+                false
+            },
+            //
+            if y > 0 {
+                self.get(x, y - 1).is_none()
+            } else {
+                false
+            },
+            //
+            if y > 0 && x < self.w - 1 {
+                self.get(x + 1, y - 1).is_none()
+            } else {
+                false
+            },
+        ]
+    }
+
     pub fn get(&mut self, x: u32, y: u32) -> Option<Entity> {
         if y >= self.h || x >= self.w {
             // safety checks failed

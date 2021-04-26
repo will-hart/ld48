@@ -3,9 +3,10 @@ use crate::{
     dims::Dims,
     entity::{Particle, ParticleType, Spawner},
     map::Map,
-    GameState, Player, Position, StaticEntity,
+    GameState, LightingTarget, Player, Position, StaticEntity,
 };
 use bevy::prelude::*;
+use rand::{thread_rng, Rng};
 use std::ops::Range;
 
 pub struct NextLevel(pub u32);
@@ -33,30 +34,81 @@ pub struct Level {
     pub walls: Vec<Wall>,
     pub spawners: Vec<Spawner>,
     pub sinks: Vec<Spawner>,
+
+    pub starting_light: u32,
+    pub max_light: u32,
+    pub light_decay: f64,
 }
 
 impl Level {
+    pub fn get_level(colours: &Res<Colors>, level: u32) -> Self {
+        println!("Generating level {}", level);
+        if level == 1 {
+            Level::level_one(colours)
+        } else if level == 2 {
+            Level::level_two(colours)
+        } else {
+            Level::level_one(colours)
+        }
+    }
+
     pub fn level_one(colours: &Res<Colors>) -> Self {
         Level {
             player_spawn: (5, 93),
             player_slime_target: 40,
+            starting_light: 170,
+            max_light: 60,
+            light_decay: 1.,
             walls: vec![
-                Wall::from_x_range(61..63, 93),
-                Wall::from_x_range(50..75, 50),
+                // starting
                 Wall::from_x_range(0..15, 90),
-                Wall::from_y_range(50..53, 50),
-                Wall::from_y_range(50..53, 75),
+                // steps down
+                Wall::from_x_range(20..35, 70),
+                Wall::from_x_range(40..45, 60),
+                // slime catcher
+                Wall::from_x_range(57..65, 50),
+                Wall::from_y_range(50..54, 55),
+                Wall::from_y_range(50..54, 65),
+                // slime catcher below
+                Wall::from_x_range(50..70, 30),
+                Wall::from_y_range(30..33, 50),
+                Wall::from_y_range(30..33, 70),
             ],
             spawners: vec![Spawner {
                 pos: (62, 95),
-                spawn_limit: 40,
-                spawn_delay: 0.25,
+                spawn_limit: 3000,
+                spawn_delay: 0.01,
                 initial_vel: Vec2::new(0., -1.),
                 color: colours.sand.clone(),
                 next_spawn: 0.,
                 particle_type: ParticleType::Sand,
             }],
             sinks: vec![],
+        }
+    }
+
+    pub fn level_two(colours: &Res<Colors>) -> Self {
+        Level {
+            player_spawn: (5, 5),
+            player_slime_target: 100,
+            walls: vec![
+                // starting
+                Wall::from_x_range(0..150, 3),
+                // steps up
+            ],
+            spawners: vec![Spawner {
+                pos: (62, 95),
+                spawn_limit: 300,
+                spawn_delay: 0.5,
+                initial_vel: Vec2::new(0., -1.),
+                color: colours.sand.clone(),
+                next_spawn: 0.,
+                particle_type: ParticleType::Sand,
+            }],
+            sinks: vec![],
+            starting_light: 35,
+            max_light: 35,
+            light_decay: 10.,
         }
     }
 }
@@ -68,17 +120,23 @@ pub fn spawn_level(
     mut map: ResMut<Map>,
     mut state: ResMut<State<GameState>>,
     mut next_level: ResMut<NextLevel>,
-    mut players: Query<(&mut Player, &mut Position, &mut Transform)>,
+    mut players: Query<(
+        &mut Player,
+        &mut Position,
+        &mut Transform,
+        &mut LightingTarget,
+    )>,
 ) {
     // clear the map
     let bg = to_u8s(colours.background);
     map.clear(&dims, &bg);
 
     // get the data for the next level
-    let level = Level::level_one(&colours);
+    let level = Level::get_level(&colours, next_level.0);
+    let mut rng = thread_rng();
 
     // move the player to the right spawn pos and configure them
-    for (mut player, mut pos, mut tx) in players.iter_mut() {
+    for (mut player, mut pos, mut tx, mut light) in players.iter_mut() {
         pos.0 = level.player_spawn.0;
         pos.1 = level.player_spawn.1;
 
@@ -92,6 +150,10 @@ pub fn spawn_level(
 
         player.slime_target = level.player_slime_target;
 
+        light.lighting_strength = level.starting_light;
+        light.max_light_strength = level.max_light;
+        light.lighting_decay_rate = level.light_decay;
+
         println!("Moved player to [{},{}] ({})", pos.0, pos.1, tx.translation);
     }
 
@@ -104,6 +166,7 @@ pub fn spawn_level(
                 color: colours.walls.clone(),
                 particle_type: ParticleType::Obstacle,
                 next_update: f64::MAX,
+                is_left_first: rng.gen_bool(0.5),
             };
 
             let entity = commands.spawn().insert(particle).insert(StaticEntity).id();

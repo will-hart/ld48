@@ -14,6 +14,7 @@ pub struct Particle {
     pub color: Color,
     pub particle_type: ParticleType,
     pub next_update: f64,
+    pub is_left_first: bool,
 }
 
 impl Particle {

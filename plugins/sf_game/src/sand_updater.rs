@@ -28,17 +28,64 @@ pub fn sand_updater(
 
         let next_pos = particle.get_next_pos();
         let mut x = next_pos.0;
-        let y = next_pos.1;
+        let mut y = next_pos.1;
 
-        // check to see if we can move diagonally
+        // if the square directly below is occupied, try some other directions
         match map.get(x, y) {
             Some(_) => {
-                if x > 0 && map.get(x - 1, y).is_none() {
-                    x -= 1;
-                } else if x < dims.tex_w - 1 && map.get(x + 1, y).is_none() {
-                    x += 1;
+                let neighbours = map.test_free_neighbours(x, y + 1);
+
+                let diags = if particle.is_left_first {
+                    [6, 8]
                 } else {
-                    continue;
+                    [8, 6]
+                };
+
+                // randomly pick a diagonal
+                if neighbours[diags[0]] {
+                    if diags[0] == 6 {
+                        x -= 1
+                    } else {
+                        x += 1
+                    }
+                } else if neighbours[diags[1]] {
+                    if diags[1] == 6 {
+                        x -= 1
+                    } else {
+                        x += 1
+                    }
+                } else {
+                    // don't smash about if there aren't any neighbours
+                    if !neighbours[3] && !neighbours[5] {
+                        continue;
+                    }
+
+                    // randomly pick a horizontal
+                    let sides = if particle.is_left_first {
+                        [3, 5]
+                    } else {
+                        [5, 3]
+                    };
+
+                    if neighbours[sides[0]] {
+                        if sides[0] == 3 {
+                            x -= 1;
+                            y += 1;
+                        } else {
+                            x += 1;
+                            y += 1;
+                        }
+                    } else if neighbours[sides[1]] {
+                        if sides[1] == 3 {
+                            x -= 1;
+                            y += 1;
+                        } else {
+                            x += 1;
+                            y += 1;
+                        }
+                    } else {
+                        continue;
+                    }
                 }
             }
             _ => {}

@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::{thread_rng, Rng};
 use sf_core::{
     dims::Dims,
     entity::{Particle, Spawner},
@@ -13,6 +14,8 @@ pub fn spawner_emission(
     mut spawners: Query<(&mut Spawner, Entity)>,
 ) {
     let now = time.seconds_since_startup();
+    let mut rng = thread_rng();
+
     for (mut spawner, ent) in spawners.iter_mut() {
         if spawner.spawn_limit == 0 {
             println!("Spawner depleted");
@@ -37,6 +40,7 @@ pub fn spawner_emission(
             color: spawner.color.clone(),
             particle_type: spawner.particle_type,
             next_update: 0.,
+            is_left_first: rng.gen_bool(0.5),
         };
         let entity = commands.spawn().insert(particle).id();
 

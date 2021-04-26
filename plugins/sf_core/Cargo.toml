@@ -18,3 +18,4 @@ default = [
 [dependencies]
 anyhow = "1"
 bevy = { version = "0.5", default-features = false }
+rand = "0.8"
