@@ -3,8 +3,9 @@ use bevy::prelude::{Color, Vec2};
 #[derive(Debug, Copy, Clone)]
 pub enum ParticleType {
     Obstacle,
-    Trap,
+    // Trap,
     Sand,
+    Liquid,
 }
 
 #[derive(Debug, Clone, Copy)]

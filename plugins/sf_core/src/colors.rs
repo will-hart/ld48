@@ -4,6 +4,7 @@ pub struct Colors {
     pub background: Color,
     pub sand: Color,
     pub walls: Color,
+    pub blue_sand: Color,
 }
 
 impl Default for Colors {
@@ -12,6 +13,7 @@ impl Default for Colors {
             background: Color::rgb(15. / 255., 10. / 255., 11. / 255.),
             walls: Color::hsla(6., 0.71, 0.19, 1.),
             sand: Color::hsla(140., 0.68, 0.55, 1.),
+            blue_sand: Color::hsla(211., 0.68, 0.55, 1.),
         }
     }
 }

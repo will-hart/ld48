@@ -55,36 +55,43 @@ pub fn sand_updater(
                         x += 1
                     }
                 } else {
-                    // don't smash about if there aren't any neighbours
-                    if !neighbours[3] && !neighbours[5] {
-                        continue;
-                    }
+                    match particle.particle_type {
+                        sf_core::entity::ParticleType::Liquid => {
+                            // don't smash about if there aren't any neighbours
+                            if !neighbours[3] && !neighbours[5] {
+                                continue;
+                            }
 
-                    // randomly pick a horizontal
-                    let sides = if particle.is_left_first {
-                        [3, 5]
-                    } else {
-                        [5, 3]
-                    };
+                            // randomly pick a horizontal
+                            let sides = if particle.is_left_first {
+                                [3, 5]
+                            } else {
+                                [5, 3]
+                            };
 
-                    if neighbours[sides[0]] {
-                        if sides[0] == 3 {
-                            x -= 1;
-                            y += 1;
-                        } else {
-                            x += 1;
-                            y += 1;
+                            if neighbours[sides[0]] {
+                                if sides[0] == 3 {
+                                    x -= 1;
+                                    y += 1;
+                                } else {
+                                    x += 1;
+                                    y += 1;
+                                }
+                            } else if neighbours[sides[1]] {
+                                if sides[1] == 3 {
+                                    x -= 1;
+                                    y += 1;
+                                } else {
+                                    x += 1;
+                                    y += 1;
+                                }
+                            } else {
+                                continue;
+                            }
                         }
-                    } else if neighbours[sides[1]] {
-                        if sides[1] == 3 {
-                            x -= 1;
-                            y += 1;
-                        } else {
-                            x += 1;
-                            y += 1;
+                        _ => {
+                            continue;
                         }
-                    } else {
-                        continue;
                     }
                 }
             }
