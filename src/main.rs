@@ -30,7 +30,7 @@ fn main() {
         .insert_resource(WindowDescriptor {
             width: WINDOW_WIDTH as f32,
             height: WINDOW_HEIGHT as f32,
-            title: "LD48: Sandfall".to_string(),
+            title: "LD48: Slimefall".to_string(),
             resizable: false,
             ..Default::default()
         })
