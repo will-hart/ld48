@@ -1,5 +1,5 @@
 [package]
-name = "sf_menu"
+name = "sf_game"
 version = "0.1.0"
 authors = ["William Hart <hart.wl@gmail.com>"]
 edition = "2018"

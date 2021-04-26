@@ -18,9 +18,9 @@ enum MenuStage {
     Spawning,
 }
 
-pub struct MenuPlugin;
+pub struct GamePlugin;
 
-impl Plugin for MenuPlugin {
+impl Plugin for GamePlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.insert_resource(LightingStatus {
             enabled: true,

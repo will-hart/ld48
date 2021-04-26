@@ -9,7 +9,7 @@ use sf_core::{
     colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map, CorePlugin,
     GameState, MainCamera, MainTexture,
 };
-use sf_menu::MenuPlugin;
+use sf_game::GamePlugin;
 use sf_player::PlayerPlugin;
 
 const WINDOW_WIDTH: u32 = 1200;
@@ -40,7 +40,7 @@ fn main() {
         // .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
         .add_plugin(CorePlugin)
         .add_plugin(PlayerPlugin)
-        .add_plugin(MenuPlugin)
+        .add_plugin(GamePlugin)
         .add_startup_system(setup.system())
         .insert_resource(NextLevel(1))
         .run();

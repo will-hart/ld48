@@ -1603,7 +1603,7 @@ dependencies = [
  "anyhow",
  "bevy",
  "sf_core",
- "sf_menu",
+ "sf_game",
  "sf_player",
 ]
 
@@ -2181,7 +2181,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "sf_menu"
+name = "sf_game"
 version = "0.1.0"
 dependencies = [
  "anyhow",
