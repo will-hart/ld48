@@ -1,5 +1,5 @@
 [package]
-name = "sf_core"
+name = "sf_game"
 version = "0.1.0"
 authors = ["William Hart <hart.wl@gmail.com>"]
 edition = "2018"
@@ -19,3 +19,6 @@ default = [
 anyhow = "1"
 bevy = { version = "0.5", default-features = false }
 rand = "0.8"
+
+sf_core = { path = "../sf_core" }
+sf_player = { path = "../sf_player" }

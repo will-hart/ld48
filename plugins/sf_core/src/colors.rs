@@ -1,26 +1,29 @@
 use bevy::prelude::*;
 
 pub struct Colors {
-    pub menu: Color,
+    pub background: Color,
     pub sand: Color,
     pub walls: Color,
+    pub blue_sand: Color,
+    pub red_sand: Color,
 }
 
 impl Default for Colors {
     fn default() -> Self {
         Colors {
-            menu: Color::rgb(41. / 255., 48. / 255., 56. / 255.),
-            walls: Color::rgb(72. / 255., 49. / 255., 25. / 255.),
-            sand: Color::rgb(218. / 255., 157. / 255., 82. / 255.),
+            background: Color::rgb(15. / 255., 10. / 255., 11. / 255.),
+            walls: Color::hsla(6., 0.71, 0.19, 1.),
+            sand: Color::hsla(140., 0.68, 0.55, 1.),
+            blue_sand: Color::hsla(211., 0.68, 0.55, 1.),
+            red_sand: Color::hsla(11., 0.68, 0.55, 1.),
         }
     }
 }
 
-pub fn to_u8s(color: Color) -> [u8; 4] {
+pub fn to_u8s(color: Color) -> [u8; 3] {
     [
         (color.r() * 255.) as u8,
         (color.g() * 255.) as u8,
         (color.b() * 255.) as u8,
-        255,
     ]
 }
