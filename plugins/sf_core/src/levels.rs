@@ -95,7 +95,7 @@ pub fn spawn_level(
                 let particle = Particle {
                     pos: Vec2::new(x as f32, y as f32),
                     vel: Vec2::ZERO,
-                    color: colours.menu.clone(),
+                    color: colours.background.clone(),
                     particle_type: ParticleType::Obstacle,
                     next_update: f64::MAX,
                 };

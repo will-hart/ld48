@@ -29,7 +29,7 @@ fn main() {
     let mut app = App::build();
 
     app.add_state(GameState::Menu)
-        .insert_resource(ClearColor(colors.menu))
+        .insert_resource(ClearColor(colors.background))
         .insert_resource(colors)
         .insert_resource(InputState::default())
         .insert_resource(WindowDescriptor {

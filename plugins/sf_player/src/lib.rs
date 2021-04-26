@@ -3,6 +3,7 @@ use sf_core::{levels::spawn_level, GameState};
 
 mod animate_player;
 mod calculate_player_movement;
+mod game_over_tracker;
 mod lighting_decay;
 mod player_sink;
 mod spawn_player;
@@ -31,29 +32,40 @@ impl Plugin for PlayerPlugin {
                 .with_system(
                     calculate_player_movement
                         .system()
-                        .label("calculate_player_movement"),
+                        .label("calculate_player_movement")
+                        .before("game_over_tracker"),
                 )
                 .with_system(player_sink.system().after("calculate_player_movement"))
                 .with_system(
                     lighting_decay
                         .system()
                         .label("lighting_decay")
-                        .after("calculate_player_movement"),
+                        .after("calculate_player_movement")
+                        .before("game_over_tracker"),
                 )
                 .with_system(
                     update_player_ui::update_player_fire
                         .system()
-                        .after("lighting_decay"),
+                        .after("lighting_decay")
+                        .before("game_over_tracker"),
                 )
                 .with_system(
                     update_player_ui::update_player_slime
                         .system()
-                        .after("lighting_decay"),
+                        .after("lighting_decay")
+                        .before("game_over_tracker"),
                 )
                 .with_system(
                     update_player_ui::update_player_message
                         .system()
-                        .after("lighting_decay"),
+                        .after("lighting_decay")
+                        .before("game_over_tracker"),
+                )
+                .with_system(
+                    game_over_tracker::game_over_tracker
+                        .system()
+                        .label("game_over_tracker")
+                        .after("calculate_player_movement"),
                 ),
         )
         .add_system(animate_player.system());

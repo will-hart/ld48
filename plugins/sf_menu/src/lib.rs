@@ -6,7 +6,7 @@ use sf_core::{
     dims::Dims,
     entity::{Particle, Sink, Spawner},
     map::Map,
-    GameState, StaticEntity,
+    GameState, Player, StaticEntity,
 };
 
 pub mod lighting;
@@ -99,13 +99,18 @@ pub fn despawner(
     colours: Res<Colors>,
     dims: Res<Dims>,
     mut map: ResMut<Map>,
-    mut query: Query<(&Particle, &Entity)>,
+    mut particles: Query<(&Particle, Entity)>,
+    mut players: Query<(&Player, Entity)>,
 ) {
-    for (_, &ent) in query.iter_mut() {
+    for (_, ent) in particles.iter_mut() {
         commands.entity(ent).despawn();
     }
 
-    let bg = to_u8s(colours.menu);
+    for (_, ent) in players.iter_mut() {
+        commands.entity(ent).despawn();
+    }
+
+    let bg = to_u8s(colours.background);
     map.clear(dims, &bg);
 }
 

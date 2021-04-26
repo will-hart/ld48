@@ -101,9 +101,14 @@ impl Map {
         // set texture to the background colour
         for x in 0..dims.tex_w {
             for y in 0..dims.tex_h {
+                let mut last_idx = 0;
                 for (pixel, idx) in dims.to_range_enumerate(x, y) {
-                    self.raw_texture.data[idx] = if pixel == 3 { 0 } else { clear_colour[pixel] };
+                    self.raw_texture.data[idx] = clear_colour[pixel];
+                    last_idx = idx;
                 }
+
+                // set the alpha value to 0
+                self.raw_texture.data[last_idx + 1] = 0;
             }
         }
     }
