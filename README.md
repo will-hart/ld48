@@ -11,6 +11,7 @@
 - [x] fix colours to be more thematic
 - [x] improve movement
 - [x] liquid slime
+- [x] flavour text / tutorials
 - [ ] 2-3 levels
 - [ ] victory condition + text
 - [ ] can't jump through floors - may require physics
@@ -19,6 +20,5 @@
 - [ ] procgen levels
 - [ ] run animations
 - [ ] physics based character controller
-- [ ] flavour text / tutorials
 - [ ] sound effects
 - [ ] solid slime should fall through liquid

@@ -8,6 +8,7 @@ pub mod lighting;
 pub mod sand_updater;
 pub mod sink_consumption;
 pub mod spawner_emission;
+pub mod timed_despawner;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, SystemLabel)]
 enum MenuStage {
@@ -41,7 +42,12 @@ impl Plugin for GamePlugin {
                         .label(MenuStage::Spawning)
                         .after(MenuStage::Movement),
                 )
-                .with_system(point_lighting.system().after(MenuStage::Spawning)),
+                .with_system(point_lighting.system().after(MenuStage::Spawning))
+                .with_system(
+                    timed_despawner::timed_despawner
+                        .system()
+                        .after(MenuStage::Spawning),
+                ),
         )
         .add_system_set(
             SystemSet::on_exit(GameState::Playing).with_system(despawner::despawner.system()),

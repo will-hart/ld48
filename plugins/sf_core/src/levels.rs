@@ -3,13 +3,14 @@ use crate::{
     dims::Dims,
     entity::{Particle, ParticleType, Spawner},
     map::Map,
-    GameState, LightingTarget, Player, Position, StaticEntity,
+    GameState, LightingTarget, Player, Position, StaticEntity, TimedDespawn,
 };
 use bevy::prelude::*;
 use rand::{thread_rng, Rng};
 use std::ops::Range;
 
 pub struct NextLevel(pub u32);
+pub struct LevelMessage(pub String);
 
 pub struct Wall {
     pub points: Vec<(u32, u32)>,
@@ -34,6 +35,7 @@ pub struct Level {
     pub walls: Vec<Wall>,
     pub spawners: Vec<Spawner>,
     pub sinks: Vec<Spawner>,
+    pub message: String,
 
     pub starting_light: u32,
     pub max_light: u32,
@@ -59,6 +61,7 @@ impl Level {
             starting_light: 170,
             max_light: 60,
             light_decay: 1.,
+            message: "Collect enough slime to exit at the bottom of the level...".into(),
             walls: vec![
                 // starting
                 Wall::from_x_range(0..15, 90),
@@ -102,6 +105,7 @@ impl Level {
         Level {
             player_spawn: (5, 5),
             player_slime_target: 100,
+            message: "Slime powers your light, finish before your light runs out".into(),
             walls: vec![
                 // starting
                 Wall::from_x_range(0..150, 3),
@@ -190,7 +194,15 @@ pub fn spawn_level(
         commands.spawn().insert(spawner);
     }
 
+    // increment the level
     next_level.0 += 1;
+
+    // spawn the level message
+    commands
+        .spawn()
+        .insert(LevelMessage(level.message))
+        .insert(Timer::from_seconds(10., false))
+        .insert(TimedDespawn);
 
     state.set(GameState::Playing).unwrap();
     println!("Level spawned");

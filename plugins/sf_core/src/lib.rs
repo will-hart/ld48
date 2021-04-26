@@ -29,6 +29,7 @@ pub struct MainTexture {
 pub struct MainCamera;
 pub struct StaticEntity;
 pub struct GameOver;
+pub struct TimedDespawn;
 
 pub struct Position(pub u32, pub u32);
 

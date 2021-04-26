@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use sf_core::{
-    levels::NextLevel,
+    levels::{LevelMessage, NextLevel},
     ui::{FireCount, LevelCount, SlimeCount, UiHelpMessage},
     LightingTarget, Player,
 };
@@ -29,16 +29,26 @@ pub fn update_player_slime(
 
 pub fn update_player_message(
     players: Query<&Player>,
-    mut slimes: Query<&mut Text, With<UiHelpMessage>>,
+    mut messages: Query<&mut Text, With<UiHelpMessage>>,
+    level_messages: Query<&LevelMessage>,
 ) {
     let player = players.single().expect("Should have a spawned player");
 
-    for mut text in slimes.iter_mut() {
-        text.sections[0].value = if player.slime_target > 0 {
-            "Find slime, don't touch the ground".into()
-        } else {
-            "Reach the ground to progress!".into()
-        };
+    match level_messages.single() {
+        Ok(lm) => {
+            for mut text in messages.iter_mut() {
+                text.sections[0].value = lm.0.clone();
+            }
+        }
+        Err(_) => {
+            for mut text in messages.iter_mut() {
+                text.sections[0].value = if player.slime_target > 0 {
+                    "Find slime, don't touch the ground".into()
+                } else {
+                    "Reach the ground to progress!".into()
+                };
+            }
+        }
     }
 }
 
