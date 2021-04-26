@@ -8,4 +8,5 @@
 - [ ] improve movement
 - [ ] make lighting a shader
 - [ ] add some more interest in the background
-- [ ] fix colours to be more thematic
+- [ ] can't walk through vertical walls
+- [ ] can't jump through floors
