@@ -5,6 +5,7 @@ use render::render_texture;
 pub mod colors;
 pub mod dims;
 pub mod entity;
+pub mod game_over_ui;
 pub mod input;
 pub mod levels;
 pub mod map;

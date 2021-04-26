@@ -97,6 +97,9 @@ pub fn sand_updater(
 
 pub fn despawner(
     mut commands: Commands,
+    dims: Res<Dims>,
+    colours: Res<Colors>,
+    mut map: ResMut<Map>,
     mut particles: Query<(&Particle, Entity)>,
     mut players: Query<(&Player, Entity)>,
     mut ui: Query<(&PlayingUiElement, Entity)>,
@@ -112,6 +115,10 @@ pub fn despawner(
     for (_, ent) in ui.iter_mut() {
         commands.entity(ent).despawn_recursive();
     }
+
+    // clear the map
+    let bg = to_u8s(colours.background);
+    map.clear(&dims, &bg);
 }
 
 pub fn spawner_emission(

@@ -1,5 +1,10 @@
 use bevy::prelude::*;
-use sf_core::{levels::spawn_level, ui::spawn_ui, GameState};
+use sf_core::{
+    game_over_ui::{despawn_game_over_ui, restart_game_watcher, spawn_game_over_ui},
+    levels::spawn_level,
+    ui::spawn_ui,
+    GameState,
+};
 
 mod animate_player;
 mod calculate_player_movement;
@@ -75,6 +80,15 @@ impl Plugin for PlayerPlugin {
                         .after("calculate_player_movement"),
                 ),
         )
-        .add_system(animate_player.system());
+        .add_system(animate_player.system())
+        .add_system_set(
+            SystemSet::on_enter(GameState::GameOver).with_system(spawn_game_over_ui.system()),
+        )
+        .add_system_set(
+            SystemSet::on_update(GameState::GameOver).with_system(restart_game_watcher.system()),
+        )
+        .add_system_set(
+            SystemSet::on_exit(GameState::GameOver).with_system(despawn_game_over_ui.system()),
+        );
     }
 }
