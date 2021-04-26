@@ -9,8 +9,8 @@ pub struct Colors {
 impl Default for Colors {
     fn default() -> Self {
         Colors {
-            background: Color::rgb(10. / 255., 12. / 255., 15. / 255.),
-            walls: Color::hsla(206., 0.68, 0.02, 1.),
+            background: Color::rgb(15. / 255., 10. / 255., 11. / 255.),
+            walls: Color::hsla(6., 0.71, 0.19, 1.),
             sand: Color::hsla(140., 0.68, 0.55, 1.),
         }
     }

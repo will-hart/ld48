@@ -8,12 +8,13 @@
 - [x] display level in UI
 - [x] BUG: levels don't colour when progressing
 - [x] proper game over screen
+- [x] fix colours to be more thematic
 - [ ] improve movement
 - [ ] 2-3 levels
 - [ ] victory condition + text
-- [ ] fix colours to be more thematic
 - [ ] can't jump through floors - may require physics
 - [ ] add some more interest in the background
 - [ ] make lighting a shader
 - [ ] liquid slime
 - [ ] procgen levels
+- [ ] run animations
