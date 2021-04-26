@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use sf_core::{levels::spawn_level, GameState};
+use sf_core::{levels::spawn_level, ui::spawn_ui, GameState};
 
 mod animate_player;
 mod calculate_player_movement;
@@ -21,7 +21,8 @@ impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut bevy::prelude::AppBuilder) {
         app.add_system_set(
             SystemSet::on_enter(GameState::Loading)
-                .with_system(spawn_player.system().label("spawn_player")),
+                .with_system(spawn_player.system().label("spawn_player"))
+                .with_system(spawn_ui.system()),
         )
         .add_system_set(
             SystemSet::on_update(GameState::Loading)
@@ -57,6 +58,12 @@ impl Plugin for PlayerPlugin {
                 )
                 .with_system(
                     update_player_ui::update_player_message
+                        .system()
+                        .after("lighting_decay")
+                        .before("game_over_tracker"),
+                )
+                .with_system(
+                    update_player_ui::update_player_level
                         .system()
                         .after("lighting_decay")
                         .before("game_over_tracker"),

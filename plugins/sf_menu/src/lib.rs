@@ -6,6 +6,7 @@ use sf_core::{
     dims::Dims,
     entity::{Particle, Sink, Spawner},
     map::Map,
+    ui::PlayingUiElement,
     GameState, Player, StaticEntity,
 };
 
@@ -101,13 +102,18 @@ pub fn despawner(
     mut map: ResMut<Map>,
     mut particles: Query<(&Particle, Entity)>,
     mut players: Query<(&Player, Entity)>,
+    mut ui: Query<(&PlayingUiElement, Entity)>,
 ) {
     for (_, ent) in particles.iter_mut() {
-        commands.entity(ent).despawn();
+        commands.entity(ent).despawn_recursive();
     }
 
     for (_, ent) in players.iter_mut() {
-        commands.entity(ent).despawn();
+        commands.entity(ent).despawn_recursive();
+    }
+
+    for (_, ent) in ui.iter_mut() {
+        commands.entity(ent).despawn_recursive();
     }
 
     let bg = to_u8s(colours.background);

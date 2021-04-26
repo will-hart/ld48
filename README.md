@@ -3,16 +3,16 @@
 - [x] update message when player can exit
 - [x] can't walk through vertical walls
 - [x] game over state if y == 0 and slime_target > 0
+- [x] progress to next level when finishing old level
 - [ ] BUG: levels don't colour when progressing
-- [ ] game over if light = 0
+- [ ] proper game over screen
+- [ ] improve movement
 - [ ] 2-3 levels
-- [ ] progress to next level when finishing old level
 - [ ] display level in UI
 - [ ] victory condition + text
-- [ ] improve movement
-- [ ] can't jump through floors - may require physics
 - [ ] fix colours to be more thematic
-- [ ] make lighting a shader
+- [ ] can't jump through floors - may require physics
 - [ ] add some more interest in the background
+- [ ] make lighting a shader
 - [ ] liquid slime
 - [ ] procgen levels

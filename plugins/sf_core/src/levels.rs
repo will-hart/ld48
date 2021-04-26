@@ -67,54 +67,50 @@ pub fn spawn_level(
     colours: Res<Colors>,
     mut map: ResMut<Map>,
     mut state: ResMut<State<GameState>>,
-    mut next_level: Query<(&NextLevel, Entity)>,
+    mut next_level: ResMut<NextLevel>,
     mut players: Query<(&mut Player, &mut Position, &mut Transform)>,
 ) {
-    for (_, entity) in next_level.iter_mut() {
-        let level = Level::level_one(&colours);
+    let level = Level::level_one(&colours);
 
-        // move the player to the right spawn pos and configure them
-        for (mut player, mut pos, mut tx) in players.iter_mut() {
-            pos.0 = level.player_spawn.0;
-            pos.1 = level.player_spawn.1;
+    // move the player to the right spawn pos and configure them
+    for (mut player, mut pos, mut tx) in players.iter_mut() {
+        pos.0 = level.player_spawn.0;
+        pos.1 = level.player_spawn.1;
 
-            player.slime_target = level.player_slime_target;
+        player.slime_target = level.player_slime_target;
 
-            tx.translation = dims
-                .grid_to_world(
-                    level.player_spawn.0,
-                    level.player_spawn.1,
-                    Vec2::new(0., 24.),
-                )
-                .extend(0.);
-        }
-
-        // spawn walls
-        for wall in level.walls {
-            for (x, y) in wall.points {
-                let particle = Particle {
-                    pos: Vec2::new(x as f32, y as f32),
-                    vel: Vec2::ZERO,
-                    color: colours.background.clone(),
-                    particle_type: ParticleType::Obstacle,
-                    next_update: f64::MAX,
-                };
-
-                let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
-                map.spawn_entity(&dims, particle, entity);
-            }
-        }
-
-        // create spawners
-        for spawner in level.spawners {
-            commands.spawn().insert(spawner);
-        }
-
-        // remove the next level marker
-        commands.entity(entity).despawn();
-
-        state.set(GameState::Playing).unwrap();
-        println!("Level spawned");
-        break;
+        tx.translation = dims
+            .grid_to_world(
+                level.player_spawn.0,
+                level.player_spawn.1,
+                Vec2::new(0., 24.),
+            )
+            .extend(0.);
     }
+
+    // spawn walls
+    for wall in level.walls {
+        for (x, y) in wall.points {
+            let particle = Particle {
+                pos: Vec2::new(x as f32, y as f32),
+                vel: Vec2::ZERO,
+                color: colours.background.clone(),
+                particle_type: ParticleType::Obstacle,
+                next_update: f64::MAX,
+            };
+
+            let entity = commands.spawn().insert(particle).insert(StaticEntity).id();
+            map.spawn_entity(&dims, particle, entity);
+        }
+    }
+
+    // create spawners
+    for spawner in level.spawners {
+        commands.spawn().insert(spawner);
+    }
+
+    next_level.0 += 1;
+
+    state.set(GameState::Playing).unwrap();
+    println!("Level spawned");
 }

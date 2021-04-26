@@ -2,7 +2,9 @@ use bevy::prelude::*;
 
 pub struct SlimeCount;
 pub struct FireCount;
+pub struct LevelCount;
 pub struct UiHelpMessage;
+pub struct PlayingUiElement;
 
 pub fn spawn_ui(
     mut commands: Commands,
@@ -13,13 +15,15 @@ pub fn spawn_ui(
         .spawn_bundle(NodeBundle {
             style: Style {
                 size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
-                justify_content: JustifyContent::FlexEnd,
+                justify_content: JustifyContent::FlexStart,
                 align_items: AlignItems::FlexEnd,
+                flex_direction: FlexDirection::ColumnReverse,
                 ..Default::default()
             },
             material: materials.add(Color::NONE.into()),
             ..Default::default()
         })
+        .insert(PlayingUiElement)
         .with_children(|parent| {
             parent
                 .spawn_bundle(NodeBundle {
@@ -33,25 +37,7 @@ pub fn spawn_ui(
                     ..Default::default()
                 })
                 .with_children(|container| {
-                    container
-                        .spawn_bundle(TextBundle {
-                            style: Style {
-                                margin: Rect::all(Val::Px(5.0)),
-                                ..Default::default()
-                            },
-                            text: Text::with_section(
-                                "",
-                                TextStyle {
-                                    font: asset_server.load("fonts/PressStart2P-Regular.ttf"),
-                                    font_size: 12.,
-                                    color: Color::WHITE,
-                                },
-                                Default::default(),
-                            ),
-                            ..Default::default()
-                        })
-                        .insert(UiHelpMessage);
-
+                    // display slime target
                     container.spawn_bundle(ImageBundle {
                         style: Style {
                             size: Size::new(Val::Px(16.0), Val::Auto),
@@ -80,6 +66,7 @@ pub fn spawn_ui(
                         })
                         .insert(SlimeCount);
 
+                    // display light value
                     container.spawn_bundle(ImageBundle {
                         style: Style {
                             size: Size::new(Val::Px(16.0), Val::Auto),
@@ -108,5 +95,47 @@ pub fn spawn_ui(
                         })
                         .insert(FireCount);
                 });
+
+            // display the current level
+            parent
+                .spawn_bundle(TextBundle {
+                    style: Style {
+                        margin: Rect::all(Val::Px(5.0)),
+                        ..Default::default()
+                    },
+                    text: Text::with_section(
+                        "Level 1",
+                        TextStyle {
+                            font: asset_server.load("fonts/PressStart2P-Regular.ttf"),
+                            font_size: 10.,
+                            color: Color::rgb(0.5, 0.5, 0.5),
+                        },
+                        Default::default(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(LevelCount);
+
+            // display help message
+            parent
+                .spawn_bundle(TextBundle {
+                    style: Style {
+                        margin: Rect::all(Val::Px(5.0)),
+                        ..Default::default()
+                    },
+                    text: Text::with_section(
+                        "",
+                        TextStyle {
+                            font: asset_server.load("fonts/PressStart2P-Regular.ttf"),
+                            font_size: 10.,
+                            color: Color::rgb(0.5, 0.5, 0.5),
+                        },
+                        Default::default(),
+                    ),
+                    ..Default::default()
+                })
+                .insert(UiHelpMessage);
         });
+
+    println!("Spawned game UI");
 }

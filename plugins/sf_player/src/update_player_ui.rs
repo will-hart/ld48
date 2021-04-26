@@ -1,6 +1,7 @@
 use bevy::prelude::*;
 use sf_core::{
-    ui::{FireCount, SlimeCount, UiHelpMessage},
+    levels::NextLevel,
+    ui::{FireCount, LevelCount, SlimeCount, UiHelpMessage},
     LightingTarget, Player,
 };
 
@@ -38,5 +39,14 @@ pub fn update_player_message(
         } else {
             "Reach the ground to progress!".into()
         };
+    }
+}
+
+pub fn update_player_level(
+    next_level: Res<NextLevel>,
+    mut levels: Query<&mut Text, With<LevelCount>>,
+) {
+    for mut text in levels.iter_mut() {
+        text.sections[0].value = format!("Level {}", next_level.0 - 1);
     }
 }

@@ -11,7 +11,6 @@ use sf_core::{
     input::InputState,
     levels::NextLevel,
     map::Map,
-    ui::spawn_ui,
     CorePlugin, GameState, MainCamera, MainTexture,
 };
 use sf_menu::MenuPlugin;
@@ -47,7 +46,7 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(MenuPlugin)
         .add_startup_system(setup.system())
-        .add_startup_system(spawn_ui.system())
+        .insert_resource(NextLevel(1))
         .run();
 }
 
@@ -58,9 +57,6 @@ fn setup(
     mut textures: ResMut<Assets<Texture>>,
     colours: Res<Colors>,
 ) {
-    // trigger level loading
-    commands.spawn().insert(NextLevel(1));
-
     // spawn a camera
     commands
         .spawn()
