@@ -8,7 +8,8 @@ use sf_core::{
 };
 
 // TODO: jump acceleration
-const JUMP_SIZE: u32 = 7;
+const NUM_JUMP_FRAMES: usize = 10;
+const JUMP_SIZE: [u32; NUM_JUMP_FRAMES] = [4, 3, 2, 2, 1, 1, 1, 1, 1, 1];
 
 pub fn calculate_player_movement(
     time: Res<Time>,
@@ -18,7 +19,6 @@ pub fn calculate_player_movement(
     mut player_query: Query<(&mut Player, &mut Position, &mut Transform)>,
     particles: Query<(&Particle, Entity)>,
 ) {
-    let dx: i32 = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
     let t = time.seconds_since_startup();
 
     for (mut player, mut pos, mut tx) in player_query.iter_mut() {
@@ -29,16 +29,36 @@ pub fn calculate_player_movement(
 
         player.is_grounded = !can_move((pos.0 as i32, pos.1 as i32 - 1), &mut map, &particles);
 
+        let dx = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
+        let dx = if !player.is_grounded && !player.did_jump {
+            0
+        } else {
+            dx
+        };
         let new_x = (pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
 
         // update jumping
         // TODO: Check up for obstacles
         if player.is_grounded {
+            player.frames_since_jumped = 0;
+            player.did_jump = false;
+
             if input.jump_pressed {
-                player.y_vel = JUMP_SIZE;
+                player.did_jump = true;
+                player.frames_since_jumped = 1;
+                player.y_vel = JUMP_SIZE[0];
             } else {
                 player.y_vel = 0;
             }
+        } else {
+            if player.frames_since_jumped > 0
+                && player.did_jump
+                && player.frames_since_jumped < NUM_JUMP_FRAMES
+            {
+                player.y_vel = JUMP_SIZE[player.frames_since_jumped];
+            }
+
+            player.frames_since_jumped += 1;
         }
 
         // check for downward movement

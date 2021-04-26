@@ -35,7 +35,9 @@ pub struct Position(pub u32, pub u32);
 pub struct Player {
     pub y_vel: u32,
     pub is_grounded: bool,
+    pub did_jump: bool,
     pub next_update: f64,
+    pub frames_since_jumped: usize,
 
     pub sink_rate: f64,
     pub slime_target: u32,

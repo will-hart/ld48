@@ -9,7 +9,7 @@
 - [x] BUG: levels don't colour when progressing
 - [x] proper game over screen
 - [x] fix colours to be more thematic
-- [ ] improve movement
+- [x] improve movement
 - [ ] 2-3 levels
 - [ ] victory condition + text
 - [ ] can't jump through floors - may require physics
@@ -18,3 +18,4 @@
 - [ ] liquid slime
 - [ ] procgen levels
 - [ ] run animations
+- [ ] physics based character controller

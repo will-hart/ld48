@@ -82,8 +82,6 @@ pub fn spawn_level(
         pos.0 = level.player_spawn.0;
         pos.1 = level.player_spawn.1;
 
-        player.slime_target = level.player_slime_target;
-
         tx.translation = dims
             .grid_to_world(
                 level.player_spawn.0,
@@ -91,6 +89,10 @@ pub fn spawn_level(
                 Vec2::new(0., 16.),
             )
             .extend(0.);
+
+        player.slime_target = level.player_slime_target;
+
+        println!("Moved player to [{},{}] ({})", pos.0, pos.1, tx.translation);
     }
 
     // spawn walls

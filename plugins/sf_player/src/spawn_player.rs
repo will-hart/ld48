@@ -36,6 +36,8 @@ pub fn spawn_player(
         .insert(Player {
             y_vel: 0,
             is_grounded: false,
+            frames_since_jumped: 0,
+            did_jump: false,
             next_update: 0.,
 
             slime_target: 0,
