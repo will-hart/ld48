@@ -16,8 +16,9 @@
 - [x] victory condition + text
 - [x] can't jump through floors - may require physics
 - [x] BUG sinks and spawners weren't despawning between levels
-- [ ] 3 levels
+- [x] 3 levels
 - [ ] sound effects
+- [ ] WASM buid
 
 # Nice but unlikely 
 
