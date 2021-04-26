@@ -19,3 +19,5 @@
 - [ ] procgen levels
 - [ ] run animations
 - [ ] physics based character controller
+- [ ] flavour text / tutorials
+- [ ] sound effects
