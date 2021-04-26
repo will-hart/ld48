@@ -4,10 +4,11 @@
 
 use bevy::{prelude::*, render::texture::TextureFormat};
 use bevy::{render::texture::Extent3d, DefaultPlugins};
+use bevy_kira_audio::{AudioChannel, AudioPlugin};
 
 use sf_core::{
-    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map, CorePlugin,
-    GameState, MainCamera, MainTexture,
+    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map, AudioState,
+    CorePlugin, GameState, MainCamera, MainTexture,
 };
 use sf_game::GamePlugin;
 use sf_player::PlayerPlugin;
@@ -35,6 +36,7 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
+        .add_plugin(AudioPlugin)
         // .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
@@ -49,9 +51,25 @@ fn main() {
 fn setup(
     mut commands: Commands,
     mut state: ResMut<State<GameState>>,
+    asset_server: ResMut<AssetServer>,
+    audio: Res<bevy_kira_audio::Audio>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
 ) {
+    // load audio
+    asset_server.load_untyped("sounds/jump.ogg");
+    asset_server.load_untyped("sounds/land.ogg");
+    asset_server.load_untyped("sounds/pickup.ogg");
+    asset_server.load_untyped("sounds/victory.ogg");
+    asset_server.load_untyped("sounds/death.ogg");
+
+    // configure audio
+    let audio_state = AudioState {
+        channel: AudioChannel::new("first".to_owned()),
+    };
+    audio.set_volume(0.1);
+    commands.insert_resource(audio_state);
+
     // spawn a camera
     commands
         .spawn()

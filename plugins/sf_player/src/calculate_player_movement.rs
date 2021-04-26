@@ -4,7 +4,7 @@ use sf_core::{
     entity::{Particle, ParticleType},
     input::InputState,
     map::Map,
-    Player, Position,
+    AudioState, Player, Position,
 };
 
 // TODO: jump acceleration
@@ -16,6 +16,9 @@ pub fn calculate_player_movement(
     time: Res<Time>,
     input: Res<InputState>,
     dims: Res<Dims>,
+    asset_server: Res<AssetServer>,
+    audio_state: Res<AudioState>,
+    audio: Res<bevy_kira_audio::Audio>,
     mut map: ResMut<Map>,
     mut player_query: Query<(&mut Player, &mut Position, &mut Transform)>,
     particles: Query<(&Particle, Entity)>,
@@ -43,6 +46,7 @@ pub fn calculate_player_movement(
         if player.is_grounded {
             if player.frames_since_jumped > 0 {
                 // just landed
+                audio.play_in_channel(asset_server.load("sounds/land.ogg"), &audio_state.channel);
                 player.jump_cooldown = JUMP_COOLDOWN;
             }
 
@@ -51,6 +55,8 @@ pub fn calculate_player_movement(
             player.did_jump = false;
 
             if input.jump_pressed && player.jump_cooldown < 0 {
+                // just jumped
+                audio.play(asset_server.load("sounds/jump.ogg"));
                 player.jump_cooldown = 0;
                 player.did_jump = true;
                 player.frames_since_jumped = 1;

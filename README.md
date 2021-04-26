@@ -17,11 +17,11 @@
 - [x] can't jump through floors - may require physics
 - [x] BUG sinks and spawners weren't despawning between levels
 - [x] 3 levels
-- [ ] sound effects
-- [ ] WASM buid
+- [x] sound effects
 
 # Nice but unlikely 
 
+- [ ] WASM buid
 - [ ] add some more interest in the background
 - [ ] make lighting a shader
 - [ ] levels loaded from image

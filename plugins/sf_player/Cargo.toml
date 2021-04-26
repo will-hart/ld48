@@ -13,10 +13,12 @@ default = [
     "bevy/render",
     "bevy/png",
     "bevy/bevy_wgpu",
+    "bevy_kira_audio/ogg"
 ]
 
 [dependencies]
 anyhow = "1"
 bevy = { version = "0.5", default-features = false }
+bevy_kira_audio = "0.4"
 
 sf_core = { path = "../sf_core" }
