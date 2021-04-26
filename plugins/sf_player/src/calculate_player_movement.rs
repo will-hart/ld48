@@ -56,7 +56,7 @@ pub fn calculate_player_movement(
         pos.1 = new_y;
 
         tx.translation = dims
-            .grid_to_world(pos.0, pos.1, Vec2::new(0., 24.))
+            .grid_to_world(pos.0, pos.1, Vec2::new(0., 16.))
             .extend(0.);
     }
 }

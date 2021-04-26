@@ -88,7 +88,7 @@ pub fn spawn_level(
             .grid_to_world(
                 level.player_spawn.0,
                 level.player_spawn.1,
-                Vec2::new(0., 24.),
+                Vec2::new(0., 16.),
             )
             .extend(0.);
     }
