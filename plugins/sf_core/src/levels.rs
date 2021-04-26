@@ -1,5 +1,5 @@
 use crate::{
-    colors::Colors,
+    colors::{to_u8s, Colors},
     dims::Dims,
     entity::{Particle, ParticleType, Spawner},
     map::Map,
@@ -70,6 +70,11 @@ pub fn spawn_level(
     mut next_level: ResMut<NextLevel>,
     mut players: Query<(&mut Player, &mut Position, &mut Transform)>,
 ) {
+    // clear the map
+    let bg = to_u8s(colours.background);
+    map.clear(&dims, &bg);
+
+    // get the data for the next level
     let level = Level::level_one(&colours);
 
     // move the player to the right spawn pos and configure them
@@ -94,7 +99,7 @@ pub fn spawn_level(
             let particle = Particle {
                 pos: Vec2::new(x as f32, y as f32),
                 vel: Vec2::ZERO,
-                color: colours.background.clone(),
+                color: colours.walls.clone(),
                 particle_type: ParticleType::Obstacle,
                 next_update: f64::MAX,
             };

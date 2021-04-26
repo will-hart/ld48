@@ -54,7 +54,7 @@ pub fn sand_updater(
     colours: Res<Colors>,
     mut query: Query<&mut Particle, Without<StaticEntity>>,
 ) {
-    let empty_colour = to_u8s(colours.walls);
+    let empty_colour = to_u8s(colours.background);
     let t = time.seconds_since_startup();
     let next_t = t + 1. / 60.; // update particles at 60fps
 
@@ -97,9 +97,6 @@ pub fn sand_updater(
 
 pub fn despawner(
     mut commands: Commands,
-    colours: Res<Colors>,
-    dims: Res<Dims>,
-    mut map: ResMut<Map>,
     mut particles: Query<(&Particle, Entity)>,
     mut players: Query<(&Player, Entity)>,
     mut ui: Query<(&PlayingUiElement, Entity)>,
@@ -115,9 +112,6 @@ pub fn despawner(
     for (_, ent) in ui.iter_mut() {
         commands.entity(ent).despawn_recursive();
     }
-
-    let bg = to_u8s(colours.background);
-    map.clear(dims, &bg);
 }
 
 pub fn spawner_emission(
@@ -168,7 +162,7 @@ pub fn sink_consumption(
     mut sinks: Query<(&mut Sink, Entity)>,
 ) {
     let now = time.seconds_since_startup();
-    let clear_colour = to_u8s(colours.walls);
+    let clear_colour = to_u8s(colours.background);
 
     for (mut sink, ent) in sinks.iter_mut() {
         if sink.sink_limit == 0 {

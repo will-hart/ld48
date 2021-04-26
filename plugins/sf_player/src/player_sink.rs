@@ -20,7 +20,7 @@ pub fn player_sink(
     let t = time.seconds_since_startup();
 
     'player_loop: for (mut player, pos, mut light) in players.iter_mut() {
-        let clear_colour = to_u8s(colours.walls);
+        let clear_colour = to_u8s(colours.background);
 
         if t < player.next_sink || player.slime_target == 0 {
             continue;

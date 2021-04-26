@@ -91,7 +91,7 @@ impl Map {
         }
     }
 
-    pub fn clear(&mut self, dims: Res<Dims>, clear_colour: &[u8; 3]) {
+    pub fn clear(&mut self, dims: &Res<Dims>, clear_colour: &[u8; 3]) {
         // remove all entities
         let count = self.map.len();
         for n in 0..count {

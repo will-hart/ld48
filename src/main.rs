@@ -6,12 +6,8 @@ use bevy::{prelude::*, render::texture::TextureFormat};
 use bevy::{render::texture::Extent3d, DefaultPlugins};
 
 use sf_core::{
-    colors::{to_u8s, Colors},
-    dims::Dims,
-    input::InputState,
-    levels::NextLevel,
-    map::Map,
-    CorePlugin, GameState, MainCamera, MainTexture,
+    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map, CorePlugin,
+    GameState, MainCamera, MainTexture,
 };
 use sf_menu::MenuPlugin;
 use sf_player::PlayerPlugin;
@@ -55,7 +51,6 @@ fn setup(
     mut state: ResMut<State<GameState>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
-    colours: Res<Colors>,
 ) {
     // spawn a camera
     commands
@@ -70,15 +65,12 @@ fn setup(
     commands.insert_resource(dims);
 
     // create the texture to display
-    let mut ground = to_u8s(colours.walls).to_vec();
-    ground.push(0);
-
+    let black = vec![0, 0, 0, 0];
     let mut initial: Vec<u8> = vec![];
     let bounds = dims.texture_values() / 4;
     for _ in 0..bounds {
-        initial.append(&mut ground.clone());
+        initial.append(&mut black.clone());
     }
-
     let texture = Texture::new(
         Extent3d::new(dims.tex_w, dims.tex_h, 1),
         bevy::render::texture::TextureDimension::D2,

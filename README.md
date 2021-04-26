@@ -5,7 +5,7 @@
 - [x] game over state if y == 0 and slime_target > 0
 - [x] game over if light = 0
 - [x] progress to next level when finishing old level
-- [ ] BUG: levels don't colour when progressing
+- [x] BUG: levels don't colour when progressing
 - [ ] proper game over screen
 - [ ] improve movement
 - [ ] 2-3 levels
