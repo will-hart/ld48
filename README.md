@@ -3,6 +3,7 @@
 - [x] update message when player can exit
 - [x] can't walk through vertical walls
 - [x] game over state if y == 0 and slime_target > 0
+- [x] game over if light = 0
 - [x] progress to next level when finishing old level
 - [ ] BUG: levels don't colour when progressing
 - [ ] proper game over screen
