@@ -8,5 +8,6 @@
 - [ ] improve movement
 - [ ] make lighting a shader
 - [ ] add some more interest in the background
-- [ ] can't walk through vertical walls
-- [ ] can't jump through floors
+- [ ] fix colours to be more thematic
+- [x] can't walk through vertical walls
+- [ ] can't jump through floors - may require physics
