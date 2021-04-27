@@ -1,5 +1,8 @@
-use bevy::prelude::{Query, Res, ResMut};
-use sf_core::{dims::Dims, map::Map, LightingTarget, Position};
+use bevy::{
+    math::Vec2,
+    prelude::{Query, Res, ResMut},
+};
+use sf_core::{dims::Dims, render::render_pipeline::LightSource, LightingTarget, Position};
 
 #[derive(Default)]
 pub struct LightingStatus {
@@ -8,11 +11,10 @@ pub struct LightingStatus {
 }
 
 /// Applies a set of points lights as an alpha value.
-// TODO this should be done as a shader
 pub fn point_lighting(
-    mut map: ResMut<Map>,
-    dims: Res<Dims>,
     mut status: ResMut<LightingStatus>,
+    mut world: Query<&mut LightSource>,
+    dims: Res<Dims>,
     mut lights: Query<(&LightingTarget, &Position)>,
 ) {
     if !status.enabled {
@@ -20,37 +22,24 @@ pub fn point_lighting(
             return;
         }
 
-        // disable lighting
+        // "disable" lighting by setting a massive distance.
         println!("Disabling lighting");
-        for lx in 0..dims.tex_w {
-            for ly in 0..dims.tex_h {
-                map.set_alpha(&dims, lx, ly, 255);
-            }
-        }
-
+        let mut shader_data = world.single_mut().unwrap();
+        shader_data.strength = 100000.;
         status.disable_handled = true;
     }
 
     // for now should only be one light :(
     match lights.single_mut() {
-        Ok((light, pos)) => {
-            let (x, y) = (pos.0, pos.1);
-            let lighting_strength = light.lighting_strength;
-            let lighting_stop = (1.4 * lighting_strength as f32).ceil() as u32;
-            let lighting_strength = lighting_strength * lighting_strength; //premultiply
-
-            // apply lighting around the player
-            for lx in x - x.min(lighting_stop)..(x + lighting_stop).min(dims.tex_w - 1) {
-                for ly in y - y.min(lighting_stop)..(y + lighting_stop).min(dims.tex_h - 1) {
-                    let dx = x.max(lx) - x.min(lx);
-                    let dy = y.max(ly) - y.min(ly);
-                    let ratio = (dx * dx + dy * dy) as f64 / (lighting_strength) as f64;
-                    let alpha = 255. * (1. - ratio.clamp(0., 1.));
-
-                    map.set_alpha(&dims, lx, ly, alpha.clamp(0., 255.).floor() as u8);
-                }
+        Ok((light, pos)) => match world.single_mut() {
+            Ok(mut shader_data) => {
+                shader_data.strength = light.lighting_strength as f32;
+                shader_data.pos = Vec2::new(pos.0 as f32, (dims.tex_h - pos.1) as f32);
             }
-        }
+            _ => {
+                status.enabled = false;
+            }
+        },
         _ => {
             status.enabled = false;
         }
