@@ -10,9 +10,13 @@ use bevy::{render::texture::Extent3d, DefaultPlugins};
 use bevy_kira_audio::{AudioChannel, AudioPlugin};
 
 use sf_core::{
-    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map,
-    render_pipeline::get_custom_pipeline, AudioState, CorePlugin, GameState, MainCamera,
-    MainTexture,
+    colors::Colors,
+    dims::Dims,
+    input::InputState,
+    levels::NextLevel,
+    map::Map,
+    render::render_pipeline::{get_custom_pipeline, LightSource},
+    AudioState, CorePlugin, GameState, MainCamera, MainTexture,
 };
 use sf_game::GamePlugin;
 use sf_player::PlayerPlugin;
@@ -40,11 +44,11 @@ fn main() {
             ..Default::default()
         })
         .add_plugins(DefaultPlugins)
+        .add_plugin(CorePlugin)
         .add_plugin(AudioPlugin)
         // .add_plugin(bevy::diagnostic::FrameTimeDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::LogDiagnosticsPlugin::default())
         // .add_plugin(bevy::diagnostic::EntityCountDiagnosticsPlugin::default())
-        .add_plugin(CorePlugin)
         .add_plugin(PlayerPlugin)
         .add_plugin(GamePlugin)
         .add_startup_system(setup.system())
@@ -113,14 +117,21 @@ fn setup(
 
     commands.insert_resource(main_handles);
 
-    commands.spawn().insert_bundle(SpriteBundle {
-        material,
-        render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
-            pipeline_handle,
-        )]),
-        sprite: Sprite::new(Vec2::new(dims.win_w as f32, dims.win_h as f32)),
-        ..Default::default()
-    });
+    commands
+        .spawn()
+        .insert_bundle(SpriteBundle {
+            material,
+            render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
+                pipeline_handle,
+            )]),
+            sprite: Sprite::new(Vec2::new(dims.win_w as f32, dims.win_h as f32)),
+            ..Default::default()
+        })
+        .insert(LightSource {
+            light_x: 0.3,
+            light_y: 0.3,
+            light_strength: 0.3,
+        });
 
     // create the map to track entities
     let map = Map::new(dims, texture);
