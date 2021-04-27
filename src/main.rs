@@ -2,13 +2,17 @@
 // TODO: only in release builds
 // #![windows_subsystem = "windows"]
 
-use bevy::{prelude::*, render::texture::TextureFormat};
+use bevy::{
+    prelude::*,
+    render::{pipeline::PipelineDescriptor, pipeline::RenderPipeline, texture::TextureFormat},
+};
 use bevy::{render::texture::Extent3d, DefaultPlugins};
 use bevy_kira_audio::{AudioChannel, AudioPlugin};
 
 use sf_core::{
-    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map, AudioState,
-    CorePlugin, GameState, MainCamera, MainTexture,
+    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map,
+    render_pipeline::get_custom_pipeline, AudioState, CorePlugin, GameState, MainCamera,
+    MainTexture,
 };
 use sf_game::GamePlugin;
 use sf_player::PlayerPlugin;
@@ -53,6 +57,8 @@ fn setup(
     mut state: ResMut<State<GameState>>,
     asset_server: ResMut<AssetServer>,
     audio: Res<bevy_kira_audio::Audio>,
+    mut shaders: ResMut<Assets<Shader>>,
+    mut pipelines: ResMut<Assets<PipelineDescriptor>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut textures: ResMut<Assets<Texture>>,
 ) {
@@ -96,6 +102,9 @@ fn setup(
         TEXTURE_TYPE,
     );
 
+    // create a custom shader pipeline for the world sprite
+    let pipeline_handle = pipelines.add(get_custom_pipeline(&mut shaders));
+
     // spawn a sprite to display the texture and a resource to hold sprite data
     let th = textures.add(texture.clone());
     let material = materials.add(th.clone().into());
@@ -106,6 +115,9 @@ fn setup(
 
     commands.spawn().insert_bundle(SpriteBundle {
         material,
+        render_pipelines: RenderPipelines::from_pipelines(vec![RenderPipeline::new(
+            pipeline_handle,
+        )]),
         sprite: Sprite::new(Vec2::new(dims.win_w as f32, dims.win_h as f32)),
         ..Default::default()
     });

@@ -11,6 +11,7 @@ pub mod input;
 pub mod levels;
 pub mod map;
 pub mod render;
+pub mod render_pipeline;
 pub mod ui;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
