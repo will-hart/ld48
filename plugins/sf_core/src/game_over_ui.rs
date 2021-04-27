@@ -47,7 +47,7 @@ pub fn spawn_game_over_ui(
                 },
                 text: Text::with_section(
                     match state.current() {
-                        GameState::GameOver => "GAME OVER",
+                        GameState::GameOver => "GAME OVER (collect the slime, then drop)",
                         GameState::Victory => "You won!",
                         _ => "Huh?",
                     },

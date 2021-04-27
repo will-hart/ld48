@@ -15,12 +15,18 @@
 - [x] 2 levels
 - [x] victory condition + text
 - [x] can't jump through floors - may require physics
-- [ ] 3 levels
-- [ ] levels loaded from image
+- [x] BUG sinks and spawners weren't despawning between levels
+- [x] 3 levels
+- [x] sound effects
+
+# Nice but unlikely 
+
+- [ ] WASM buid
 - [ ] add some more interest in the background
 - [ ] make lighting a shader
-- [ ] sound effects
+- [ ] levels loaded from image
 - [ ] procgen levels
+- [ ] jump animations
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use sf_core::{
     colors::{to_u8s, Colors},
     dims::Dims,
-    entity::Particle,
+    entity::{Particle, Sink, Spawner},
     levels::LevelMessage,
     map::Map,
     ui::PlayingUiElement,
@@ -16,6 +16,8 @@ pub fn despawner(
     mut map: ResMut<Map>,
     mut particles: Query<(&Particle, Entity)>,
     mut players: Query<(&Player, Entity)>,
+    mut spawners: Query<(&Spawner, Entity)>,
+    mut sinks: Query<(&Sink, Entity)>,
     mut ui: Query<(&PlayingUiElement, Entity)>,
     mut level_messages: Query<(&LevelMessage, Entity)>,
 ) {
@@ -32,6 +34,14 @@ pub fn despawner(
     }
 
     for (_, ent) in level_messages.iter_mut() {
+        commands.entity(ent).despawn_recursive();
+    }
+
+    for (_, ent) in spawners.iter_mut() {
+        commands.entity(ent).despawn_recursive();
+    }
+
+    for (_, ent) in sinks.iter_mut() {
         commands.entity(ent).despawn_recursive();
     }
 

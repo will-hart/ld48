@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_kira_audio::AudioChannel;
 use input::input_capture;
 use render::render_texture;
 
@@ -53,6 +54,10 @@ pub struct LightingTarget {
     pub next_lighting_decay: f64,
     pub light_growth_rate: u32,
     pub max_light_strength: u32,
+}
+
+pub struct AudioState {
+    pub channel: AudioChannel,
 }
 
 pub struct CorePlugin;

@@ -4,7 +4,7 @@ use sf_core::{
     dims::Dims,
     entity::Particle,
     map::Map,
-    LightingTarget, Player, Position, StaticEntity,
+    AudioState, LightingTarget, Player, Position, StaticEntity,
 };
 
 /// Removes the particles around a player
@@ -13,6 +13,9 @@ pub fn player_sink(
     mut map: ResMut<Map>,
     time: Res<Time>,
     dims: Res<Dims>,
+    asset_server: Res<AssetServer>,
+    audio_state: Res<AudioState>,
+    audio: Res<bevy_kira_audio::Audio>,
     colours: Res<Colors>,
     mut players: Query<(&mut Player, &Position, &mut LightingTarget)>,
     particles: Query<(&Particle, Entity), Without<StaticEntity>>,
@@ -52,6 +55,12 @@ pub fn player_sink(
                             // remove the slime
                             map.destroy_at(cx, cy, &dims, &clear_colour);
                             commands.entity(ent).despawn();
+
+                            // play a sound, this could get awful
+                            audio.play_in_channel(
+                                asset_server.load("sounds/pickup.ogg"),
+                                &audio_state.channel,
+                            );
 
                             // increment the player lighting
                             player.slime_target -= 1;

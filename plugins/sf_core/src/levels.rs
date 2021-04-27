@@ -49,8 +49,10 @@ impl Level {
             Some(Level::level_one(colours))
         } else if level == 2 {
             Some(Level::level_two(colours))
-        // } else if level == 3 {
-        // Some(Level::level_three(colours))
+        } else if level == 3 {
+            Some(Level::level_three(colours))
+        } else if level == 4 {
+            Some(Level::level_four(colours))
         } else {
             None
         }
@@ -109,7 +111,7 @@ impl Level {
             player_slime_target: 100,
             starting_light: 30,
             max_light: 50,
-            light_decay: 1.1,
+            light_decay: 1.24,
             message: "Slime powers your light, finish before your it gets dark".into(),
             walls: vec![
                 // starting
@@ -232,28 +234,99 @@ impl Level {
     }
 
     pub fn level_three(colours: &Res<Colors>) -> Self {
+        let mut walls = vec![
+            // starting
+            Wall::from_x_range(0..8, 49),
+        ];
+
+        let mut spawners: Vec<Spawner> = vec![];
+
+        let plat = 14;
+
+        // build steps
+        for x in 1..=7 {
+            walls.push(Wall::from_x_range(x * plat..x * plat + 5, 50));
+            walls.push(Wall::from_x_range(x * plat + 6..x * plat + 11, 45));
+
+            spawners.push(Spawner {
+                pos: (x * plat + 8, 55),
+                spawn_limit: 5,
+                spawn_delay: 0.01,
+                initial_vel: Vec2::new(0., -1.),
+                color: colours.red_sand.clone(),
+                next_spawn: 0.,
+                particle_type: ParticleType::Sand,
+            })
+        }
+
         Level {
-            player_spawn: (5, 5),
-            player_slime_target: 100,
-            starting_light: 150,
-            max_light: 150,
-            light_decay: 1.,
-            message: "See how deep you can travel".into(),
-            walls: vec![
-                // starting
-                Wall::from_x_range(0..15, 3),
-                // steps up
-                Wall::from_x_range(10..25, 12),
-            ],
-            spawners: vec![Spawner {
-                pos: (62, 95),
-                spawn_limit: 300,
+            player_spawn: (5, 50),
+            player_slime_target: 20,
+            starting_light: 20,
+            max_light: 20,
+            light_decay: 1.5,
+            message: "Quickly now!".into(),
+            walls,
+            spawners,
+            sinks: vec![],
+        }
+    }
+
+    pub fn level_four(colours: &Res<Colors>) -> Self {
+        let mut walls = vec![
+            // starting
+            Wall::from_x_range(0..25, 4),
+            Wall::from_y_range(25, 0..62),
+        ];
+
+        for x in 1..7 {
+            walls.push(Wall::from_x_range(
+                if x % 2 == 1 { 0..10 } else { 15..25 },
+                8 * x + 5,
+            ));
+        }
+
+        walls.push(Wall::from_y_range(32, 14..90));
+        for x in 1..10 {
+            walls.push(Wall::from_x_range(
+                if x % 2 == 1 { 26..30 } else { 28..32 },
+                6 * x + 5,
+            ));
+        }
+
+        walls.push(Wall::from_x_range(26..32, 0));
+        walls.push(Wall::from_y_range(32, 0..6));
+
+        let spawners: Vec<Spawner> = vec![
+            Spawner {
+                pos: (27, 99),
+                spawn_limit: 50,
                 spawn_delay: 0.5,
                 initial_vel: Vec2::new(0., -1.),
-                color: colours.blue_sand.clone(),
+                color: colours.sand.clone(),
                 next_spawn: 0.,
                 particle_type: ParticleType::Liquid,
-            }],
+            },
+            Spawner {
+                pos: (31, 99),
+                spawn_limit: 50,
+                spawn_delay: 0.5,
+                initial_vel: Vec2::new(0., -1.),
+                color: colours.red_sand.clone(),
+                next_spawn: 0.,
+                particle_type: ParticleType::Liquid,
+            },
+        ];
+
+        Level {
+            player_spawn: (5, 5),
+            player_slime_target: 20,
+            starting_light: 20,
+            max_light: 20,
+            light_decay: 1.5,
+            message: "Quickly now!".into(),
+            walls,
+            spawners,
             sinks: vec![],
         }
     }
