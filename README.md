@@ -1,4 +1,8 @@
-# TODO
+# Slimefall
+
+A short platformer game made using the bevy engine for LD48 (72 hours).
+
+## TODO
 
 - [x] update message when player can exit
 - [x] can't walk through vertical walls
@@ -19,7 +23,7 @@
 - [x] 3 levels
 - [x] sound effects
 
-# Nice but unlikely 
+## Nice but unlikely 
 
 - [ ] WASM buid
 - [ ] add some more interest in the background
@@ -30,3 +34,9 @@
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
+
+## LICENSE
+
+MIT / Apache dual license for source code.
+
+Assets are public domain.
