@@ -128,9 +128,9 @@ fn setup(
             ..Default::default()
         })
         .insert(LightSource {
-            light_x: 0.3,
-            light_y: 0.3,
-            light_strength: 0.3,
+            pos: Vec2::new(50., 20.),
+            strength: 30.,
+            dims: Vec2::new(dims.tex_w as f32, dims.tex_h as f32),
         });
 
     // create the map to track entities
