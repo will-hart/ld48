@@ -23,7 +23,7 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 - [x] 3 levels
 - [x] sound effects
 
-## Nice but unlikely 
+## Nice but unlikely / Post jam 
 
 - [x] make lighting a shader
 - [ ] add some more interest in the background
