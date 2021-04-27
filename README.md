@@ -25,15 +25,15 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 
 ## Nice but unlikely 
 
-- [ ] WASM buid
+- [x] make lighting a shader
 - [ ] add some more interest in the background
-- [ ] make lighting a shader
 - [ ] levels loaded from image
 - [ ] procgen levels
 - [ ] jump animations
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
+- [ ] WASM buid
 
 ## LICENSE
 
