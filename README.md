@@ -33,7 +33,11 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
-- [ ] WASM buid
+- [ ] WASM build
+- [ ] destructable terrain
+- [ ] throwable flares
+- [ ] r to reset at any time
+- [ ] X lives before game over (i.e. maybe take some slime to respawn?)
 
 ## LICENSE
 
