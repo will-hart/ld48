@@ -54,8 +54,12 @@ fn main() {
         .add_plugin(PlayerPlugin)
         .add_plugin(GamePlugin)
         .add_startup_system(setup.system())
-        .insert_resource(NextLevel(1))
-        .run();
+        .insert_resource(NextLevel(1));
+
+    #[cfg(target_arch = "wasm32")]
+    app.add_plugin(bevy_webgl2::WebGL2Plugin);
+
+    app.run();
 }
 
 fn setup(
