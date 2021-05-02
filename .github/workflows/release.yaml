@@ -6,7 +6,7 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+*"
 
 env:
-  GAME_EXECUTABLE_NAME: slimefall
+  GAME_EXECUTABLE_NAME: ld48
   GAME_OSX_APP_NAME: slimefall
 
 jobs:
