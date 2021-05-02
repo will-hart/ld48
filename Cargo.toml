@@ -1,6 +1,6 @@
 [package]
 name = "ld48"
-version = "1.1.1"
+version = "1.1.2"
 authors = ["William Hart <hart.wl@gmail.com>"]
 edition = "2018"
 
