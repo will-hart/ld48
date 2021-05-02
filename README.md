@@ -2,6 +2,8 @@
 
 A short platformer game made using the bevy engine for LD48 (72 hours).
 
+Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
+
 ## TODO
 
 - [x] update message when player can exit
@@ -44,3 +46,10 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 MIT / Apache dual license for source code.
 
 Assets are public domain.
+
+## CHANGELOG
+
+### 1.1.0 (post jam)
+
+- Shaders for lighting
+- Attempt at cross-platform build scripts courtesy of https://github.com/NiklasEi/bevy_game_template
