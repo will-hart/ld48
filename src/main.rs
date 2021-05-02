@@ -1,6 +1,8 @@
-// disable console opening on windows
-// TODO: only in release builds
-// #![windows_subsystem = "windows"]
+// disable console on windows for release builds
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
+#[cfg(target_arch = "wasm32")]
+use bevy_webgl2;
 
 use bevy::{
     prelude::*,
