@@ -5,6 +5,7 @@ use sf_core::{
     entity::{Particle, Sink, Spawner},
     levels::LevelMessage,
     map::Map,
+    render::render_pipeline::LightSource,
     ui::PlayingUiElement,
     Player,
 };
@@ -20,7 +21,9 @@ pub fn despawner(
     mut sinks: Query<(&Sink, Entity)>,
     mut ui: Query<(&PlayingUiElement, Entity)>,
     mut level_messages: Query<(&LevelMessage, Entity)>,
+    mut lighting: Query<&mut LightSource>,
 ) {
+    // despawn entities and UI
     for (_, ent) in particles.iter_mut() {
         commands.entity(ent).despawn_recursive();
     }
@@ -44,6 +47,11 @@ pub fn despawner(
     for (_, ent) in sinks.iter_mut() {
         commands.entity(ent).despawn_recursive();
     }
+
+    // turn off the lights
+    let mut light = lighting.single_mut().unwrap();
+    light.strength = 0.001;
+    light.pos = Vec2::ZERO;
 
     // clear the map
     let bg = to_u8s(colours.background);

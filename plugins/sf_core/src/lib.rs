@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_kira_audio::AudioChannel;
 use input::input_capture;
-use render::render_texture;
+use render::RenderPlugin;
 
 pub mod colors;
 pub mod dims;
@@ -64,7 +64,7 @@ pub struct CorePlugin;
 
 impl Plugin for CorePlugin {
     fn build(&self, app: &mut bevy::prelude::AppBuilder) {
-        app.add_system(render_texture.system())
+        app.add_plugin(RenderPlugin)
             .add_system(input_capture.system());
     }
 }

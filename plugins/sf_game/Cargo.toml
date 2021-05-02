@@ -8,18 +8,30 @@ edition = "2018"
 
 [features]
 default = [
-    "bevy/bevy_audio",
     "bevy/bevy_gltf",
     "bevy/bevy_winit",
     "bevy/render",
     "bevy/png",
+]
+
+native = [
     "bevy/bevy_wgpu",
 ]
 
+web = [
+    "bevy_webgl2",
+]
+
+dev = [
+    "bevy/dynamic",
+    "native",
+]
+
 [dependencies]
-anyhow = "1"
 bevy = { version = "0.5", default-features = false }
-rand = "0.8"
+bevy_webgl2 = { version = " 0.5.0", optional = true }
+
+rand = { version = "0.8", default-features = false }
 
 sf_core = { path = "../sf_core" }
 sf_player = { path = "../sf_player" }

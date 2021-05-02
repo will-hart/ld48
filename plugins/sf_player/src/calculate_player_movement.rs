@@ -34,11 +34,6 @@ pub fn calculate_player_movement(
         player.is_grounded = !can_move((pos.0 as i32, pos.1 as i32 - 1), &mut map, &particles);
 
         let dx = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
-        let dx = if !player.is_grounded && !player.did_jump {
-            0
-        } else {
-            dx
-        };
         let new_x = (pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
 
         // update jumping

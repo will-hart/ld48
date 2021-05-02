@@ -2,6 +2,8 @@
 
 A short platformer game made using the bevy engine for LD48 (72 hours).
 
+Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
+
 ## TODO
 
 - [x] update message when player can exit
@@ -23,20 +25,31 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 - [x] 3 levels
 - [x] sound effects
 
-## Nice but unlikely 
+## Nice but unlikely / Post jam 
 
-- [ ] WASM buid
+- [x] make lighting a shader
 - [ ] add some more interest in the background
-- [ ] make lighting a shader
 - [ ] levels loaded from image
 - [ ] procgen levels
 - [ ] jump animations
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
+- [ ] WASM build
+- [ ] destructable terrain
+- [ ] throwable flares
+- [ ] r to reset at any time
+- [ ] X lives before game over (i.e. maybe take some slime to respawn?)
 
 ## LICENSE
 
 MIT / Apache dual license for source code.
 
 Assets are public domain.
+
+## CHANGELOG
+
+### 1.1.0 (post jam)
+
+- Shaders for lighting
+- Attempt at cross-platform build scripts courtesy of https://github.com/NiklasEi/bevy_game_template
