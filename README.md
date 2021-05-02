@@ -49,6 +49,10 @@ Assets are public domain.
 
 ## CHANGELOG
 
+### 1.1.2 (post jam)
+
+- Add conditional WASM dependencies for WebGL build
+
 ### 1.1.1 (post jam)
 
 - Fixes to MacOS build script I hope
