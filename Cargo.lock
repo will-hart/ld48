@@ -1824,7 +1824,6 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 name = "ld48"
 version = "1.0.0"
 dependencies = [
- "anyhow",
  "bevy",
  "bevy_kira_audio",
  "sf_core",
@@ -2577,7 +2576,6 @@ dependencies = [
 name = "sf_core"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "bevy",
  "bevy_kira_audio",
  "rand",
@@ -2587,7 +2585,6 @@ dependencies = [
 name = "sf_game"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "bevy",
  "rand",
  "sf_core",
@@ -2598,7 +2595,6 @@ dependencies = [
 name = "sf_player"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "bevy",
  "bevy_kira_audio",
  "sf_core",

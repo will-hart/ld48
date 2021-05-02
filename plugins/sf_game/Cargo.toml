@@ -17,9 +17,8 @@ default = [
 ]
 
 [dependencies]
-anyhow = "1"
 bevy = { version = "0.5", default-features = false }
-rand = "0.8"
+rand = { version = "0.8", default-features = false }
 
 sf_core = { path = "../sf_core" }
 sf_player = { path = "../sf_player" }
