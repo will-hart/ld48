@@ -7,10 +7,16 @@ use sf_core::{
     AudioState, Player, Position,
 };
 
+fn move_towards(current: f32, target: f32, max: f32) -> f32 {
+    let delta = target - current;
+
+    current + delta.abs().max(max.abs()) * delta.signum()
+}
+
 // TODO: jump acceleration
-const NUM_JUMP_FRAMES: usize = 10;
-const JUMP_SIZE: [u32; NUM_JUMP_FRAMES] = [2, 3, 4, 2, 2, 1, 1, 1, 1, 1];
-const JUMP_COOLDOWN: isize = 12;
+const JUMP_COOLDOWN: isize = 10;
+const JUMP_HEIGHT: f32 = 10.;
+const GRAVITY: f32 = 50.;
 
 pub fn calculate_player_movement(
     time: Res<Time>,
@@ -20,24 +26,35 @@ pub fn calculate_player_movement(
     audio_state: Res<AudioState>,
     audio: Res<bevy_kira_audio::Audio>,
     mut map: ResMut<Map>,
-    mut player_query: Query<(&mut Player, &mut Position, &mut Transform)>,
+    mut player_query: Query<(&mut Player, &Position, &mut Transform)>,
     particles: Query<(&Particle, Entity)>,
 ) {
-    let t = time.seconds_since_startup();
+    let dt = time.delta_seconds();
 
-    for (mut player, mut pos, mut tx) in player_query.iter_mut() {
-        if t < player.next_update {
-            continue;
-        }
-        player.next_update = t + (1. / 60.);
-
+    for (mut player, pos, mut tx) in player_query.iter_mut() {
         player.is_grounded = !can_move((pos.0 as i32, pos.1 as i32 - 1), &mut map, &particles);
+        let mut v = player.vel.clone();
 
         let dx = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
-        let new_x = (pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
 
-        // update jumping
-        // TODO: Check up for obstacles
+        // handle input (slowing down) vs input (accelerating)
+        if dx == 0 {
+            // slowing down
+            v.x = move_towards(player.vel.x, 0., player.x_decel * dt);
+        } else {
+            // speeding up
+            v.x = move_towards(
+                player.vel.x,
+                dx as f32 * player.move_speed,
+                if player.is_grounded {
+                    player.x_accel
+                } else {
+                    player.air_x_accel
+                } * dt,
+            );
+        }
+
+        // calculate jump velocity
         if player.is_grounded {
             if player.frames_since_jumped > 0 {
                 // just landed
@@ -47,46 +64,34 @@ pub fn calculate_player_movement(
 
             player.frames_since_jumped = 0;
             player.jump_cooldown -= 1;
-            player.did_jump = false;
 
             if input.jump_pressed && player.jump_cooldown < 0 {
                 // just jumped
                 audio.play(asset_server.load("sounds/jump.ogg"));
                 player.jump_cooldown = 0;
-                player.did_jump = true;
                 player.frames_since_jumped = 1;
-                player.y_vel = JUMP_SIZE[0];
+                v.y = (5. * JUMP_HEIGHT * GRAVITY).sqrt();
+                println!("{}", v.y);
             } else {
-                player.y_vel = 0;
+                // tried to jump but on the ground - stay put
+                v.y = 0.;
             }
         } else {
-            if player.frames_since_jumped > 0
-                && player.did_jump
-                && player.frames_since_jumped < NUM_JUMP_FRAMES
-            {
-                player.y_vel = JUMP_SIZE[player.frames_since_jumped];
-            }
-
+            // player is jumping, just count the jump frames
+            // TODO: we can use jump frames to calculate damage
             player.frames_since_jumped += 1;
+
+            // apply gravity
+            v.y -= GRAVITY;
         }
 
-        // check for downward movement
-        // TODO: properly account for player sprite size
-        // TODO: Fall damage
-        let new_y = if player.is_grounded { pos.1 } else { pos.1 - 1 } + player.y_vel;
-        player.y_vel = player.y_vel.checked_sub(1).unwrap_or(player.y_vel);
-
-        // check player can move there
-        if !can_move((new_x as i32, new_y as i32), &mut map, &particles) {
-            continue;
+        // check if the move will translate the player into an obstacle, if so, set velocity to 0
+        let (target_x, target_y) =
+            dims.world_to_grid(tx.translation.truncate() + v + Vec2::new(0., 24.));
+        if can_move((target_x as i32, target_y as i32), &mut map, &particles) {
+            // actually translate the transform, the pos will be updated in a separate system (sync_transform_to_pos)
+            tx.translation = tx.translation + v.extend(0.) * dt;
         }
-
-        pos.0 = new_x;
-        pos.1 = new_y;
-
-        tx.translation = dims
-            .grid_to_world(pos.0, pos.1, Vec2::new(0., 16.))
-            .extend(0.);
     }
 }
 

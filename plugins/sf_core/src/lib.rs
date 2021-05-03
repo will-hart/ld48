@@ -36,12 +36,14 @@ pub struct TimedDespawn;
 pub struct Position(pub u32, pub u32);
 
 pub struct Player {
-    pub y_vel: u32,
-    pub is_grounded: bool,
-    pub did_jump: bool,
-    pub jump_cooldown: isize,
+    pub vel: Vec2,
 
-    pub next_update: f64,
+    pub move_speed: f32,
+    pub x_accel: f32,
+    pub air_x_accel: f32,
+    pub x_decel: f32,
+    pub is_grounded: bool,
+    pub jump_cooldown: isize,
     pub frames_since_jumped: usize,
 
     pub sink_rate: f64,

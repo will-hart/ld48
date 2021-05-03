@@ -34,12 +34,15 @@ pub fn spawn_player(
         .insert(Timer::from_seconds(0.5, true))
         .insert(Position(player_pos.0, player_pos.1))
         .insert(Player {
-            y_vel: 0,
+            vel: Vec2::ZERO,
             is_grounded: false,
             frames_since_jumped: 0,
             jump_cooldown: 0,
-            did_jump: false,
-            next_update: 0.,
+
+            move_speed: 75.,
+            x_accel: 20.,
+            air_x_accel: 10.,
+            x_decel: 30.,
 
             slime_target: 0,
             sink_rate: 1. / 10., // 10 per second

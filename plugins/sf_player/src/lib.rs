@@ -12,6 +12,7 @@ mod game_over_tracker;
 mod lighting_decay;
 mod player_sink;
 mod spawn_player;
+mod sync_transform_to_pos;
 mod update_player_ui;
 
 use animate_player::animate_player;
@@ -41,12 +42,18 @@ impl Plugin for PlayerPlugin {
                         .label("calculate_player_movement")
                         .before("game_over_tracker"),
                 )
+                .with_system(
+                    sync_transform_to_pos::sync_transform_to_pos
+                        .system()
+                        .label("transform_sync_to_player")
+                        .after("calculate_player_movement"),
+                )
                 .with_system(player_sink.system().after("calculate_player_movement"))
                 .with_system(
                     lighting_decay
                         .system()
                         .label("lighting_decay")
-                        .after("calculate_player_movement")
+                        .after("transform_sync_to_player")
                         .before("game_over_tracker"),
                 )
                 .with_system(
@@ -77,7 +84,7 @@ impl Plugin for PlayerPlugin {
                     game_over_tracker::game_over_tracker
                         .system()
                         .label("game_over_tracker")
-                        .after("calculate_player_movement"),
+                        .after("transform_sync_to_player"),
                 ),
         )
         .add_system(animate_player.system())
