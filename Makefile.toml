@@ -32,48 +32,37 @@ args = ["install", "wasm-bindgen-cli", "--force", "--version", "0.2.69"]
 install_crate = {crate_name = "basic-http-server", binary = "basic-http-server", test_arg="--help"}
 
 [tasks.copy-files-for-release]
-dependencies = ["copy-wasm-to-build-dir", "copy-wasm-js-to-build-dir", "copy-wasm_bg-to-build-dir", "copy-index-to-build-dir", "copy-assets-to-build-dir", "copy-credits-to-build-dir"]
+script_runner = "@duckscript"
+script = [
+'''
+target = set "./build/web/target"
+web = set "./build/web"
+windows = set "./build/windows"
 
-[tasks.copy-wasm-to-build-dir]
-args = ["${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm", "build/web/target/"]
-command = "cp"
-dependencies = ["create-build-dir", "build-and-bind-wasm"]
+echo "Creating ${target}"
+rm -r ${web}
+mkdir ${target}
 
-[tasks.copy-wasm-js-to-build-dir]
-args = ["${TARGET_DIR}wasm.js", "build/web/target/"]
-command = "cp"
-dependencies = ["create-build-dir", "build-and-bind-wasm"]
+echo "Copying ${windows}/icon.ico to ${web}/icon.ico"
+cp ${windows}/icon.ico ${web}/icon.ico
+echo "Moving ${web}/icon.ico to ${web}/favicon.ico"
+mv ${web}/icon.ico ${web}/favicon.ico
 
-[tasks.copy-wasm_bg-to-build-dir]
-args = ["${TARGET_DIR}wasm_bg.wasm", "build/web/target/"]
-command = "cp"
-dependencies = ["create-build-dir", "build-and-bind-wasm"]
+echo "Copying ${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm to ${target}"
+cp ${TARGET_DIR}${CARGO_MAKE_CRATE_NAME}.wasm ${target}/${CARGO_MAKE_CRATE_NAME}.wasm
 
-[tasks.copy-assets-to-build-dir]
-args = ["-r", "assets", "build/web/"]
-command = "cp"
-dependencies = ["create-build-dir"]
+echo "Copying ${TARGET_DIR}wasm.js to ${target}"
+cp ${TARGET_DIR}wasm.js ${target}/wasm.js
 
-[tasks.copy-credits-to-build-dir]
-args = ["-r", "credits", "build/web/"]
-command = "cp"
-dependencies = ["create-build-dir"]
+echo "Copying ${TARGET_DIR}wasm_bg.wasm to ${target}"
+cp ${TARGET_DIR}wasm_bg.wasm ${target}/wasm_bg.wasm
 
-[tasks.copy-index-to-build-dir]
-args = ["index.html", "build/web/"]
-command = "cp"
-dependencies = ["create-build-dir", "prepare-favicon"]
+echo "Copying ./index.html to ${web}"
+cp ./index.html ${web}/index.html
 
-[tasks.prepare-favicon]
-args = ["build/web/icon.ico", "build/web/favicon.ico"]
-command = "mv"
-dependencies = ["create-build-dir", "copy-favicon-to-build-dir"]
+echo "Copying ./assets to ${web}"
+cp ./assets ${web}
 
-[tasks.copy-favicon-to-build-dir]
-args = ["build/windows/icon.ico", "build/web/"]
-command = "cp"
-dependencies = ["create-build-dir"]
-
-[tasks.create-build-dir]
-args = ["-p", "build/web/target"]
-command = "mkdir"
+echo "Copying ./credits to ${web}"
+cp ./credits ${web}
+''']

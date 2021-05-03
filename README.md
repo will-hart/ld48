@@ -4,7 +4,22 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 
 Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
 
-## TODO
+## Running
+
+Desktop (native)
+
+```bash
+cargo run --features native
+```
+
+Web
+
+```bash
+# cargo install cargo-make
+cargo make serve
+```
+
+## Done (Jam Version)
 
 - [x] update message when player can exit
 - [x] can't walk through vertical walls
@@ -25,9 +40,10 @@ Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
 - [x] 3 levels
 - [x] sound effects
 
-## Nice but unlikely / Post jam 
+## Post jam 
 
 - [x] make lighting a shader
+- [x] HTML5 / WASM / WebGL build
 - [ ] add some more interest in the background
 - [ ] levels loaded from image
 - [ ] procgen levels
@@ -35,7 +51,6 @@ Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
-- [ ] WASM build
 - [ ] destructable terrain
 - [ ] throwable flares
 - [ ] r to reset at any time
@@ -48,6 +63,10 @@ MIT / Apache dual license for source code.
 Assets are public domain.
 
 ## CHANGELOG
+
+### 1.2.0 (post jam)
+
+- Get HTML5 (wasm/WebGL) and native builds both working
 
 ### 1.1.2 (post jam)
 
