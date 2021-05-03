@@ -4,7 +4,22 @@ A short platformer game made using the bevy engine for LD48 (72 hours).
 
 Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
 
-## TODO
+## Running
+
+Desktop (native)
+
+```bash
+cargo run --features native
+```
+
+Web
+
+```bash
+# cargo install cargo-make
+cargo make serve
+```
+
+## Done (Jam Version)
 
 - [x] update message when player can exit
 - [x] can't walk through vertical walls
@@ -25,7 +40,7 @@ Build scripts (post jam) from https://github.com/NiklasEi/bevy_game_template
 - [x] 3 levels
 - [x] sound effects
 
-## Nice but unlikely / Post jam 
+## Post jam 
 
 - [x] make lighting a shader
 - [ ] add some more interest in the background

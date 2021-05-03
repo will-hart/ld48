@@ -12,13 +12,9 @@ use bevy::{render::texture::Extent3d, DefaultPlugins};
 use bevy_kira_audio::{AudioChannel, AudioPlugin};
 
 use sf_core::{
-    colors::Colors,
-    dims::Dims,
-    input::InputState,
-    levels::NextLevel,
-    map::Map,
-    render::render_pipeline::{get_custom_pipeline, LightSource},
-    AudioState, CorePlugin, GameState, MainCamera, MainTexture,
+    colors::Colors, dims::Dims, input::InputState, levels::NextLevel, map::Map,
+    render::render_pipeline::LightSource, AudioState, CorePlugin, GameState, MainCamera,
+    MainTexture,
 };
 use sf_game::GamePlugin;
 use sf_player::PlayerPlugin;
@@ -30,6 +26,8 @@ const TEXTURE_STRIDE: u32 = 8;
 const TEXTURE_TYPE: TextureFormat = TextureFormat::Rgba8Unorm;
 
 fn main() {
+    set_panic_hook();
+
     let colors = Colors::default();
 
     let mut app = App::build();
@@ -113,7 +111,15 @@ fn setup(
     );
 
     // create a custom shader pipeline for the world sprite
-    let pipeline_handle = pipelines.add(get_custom_pipeline(&mut shaders));
+    #[cfg(target_arch = "wasm32")]
+    let pipeline_handle = pipelines.add(sf_core::render::render_pipeline_web::get_custom_pipeline(
+        &mut shaders,
+    ));
+
+    #[cfg(not(target_arch = "wasm32"))]
+    let pipeline_handle = pipelines.add(sf_core::render::render_pipeline::get_custom_pipeline(
+        &mut shaders,
+    ));
 
     // spawn a sprite to display the texture and a resource to hold sprite data
     let th = textures.add(texture.clone());
@@ -145,4 +151,9 @@ fn setup(
 
     // move to loading state
     state.set(GameState::Loading).unwrap();
+}
+
+fn set_panic_hook() {
+    #[cfg(target_arch = "wasm32")]
+    console_error_panic_hook::set_once();
 }

@@ -3,6 +3,10 @@ use bevy::prelude::*;
 use self::render_pipeline::LightSource;
 
 pub mod render_pipeline;
+
+#[cfg(target_arch = "wasm32")]
+pub mod render_pipeline_web;
+
 pub mod render_texture;
 pub mod setup_rendering;
 
