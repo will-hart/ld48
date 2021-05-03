@@ -43,6 +43,7 @@ cargo make serve
 ## Post jam 
 
 - [x] make lighting a shader
+- [x] HTML5 / WASM / WebGL build
 - [ ] add some more interest in the background
 - [ ] levels loaded from image
 - [ ] procgen levels
@@ -50,7 +51,6 @@ cargo make serve
 - [ ] run animations
 - [ ] physics based character controller
 - [ ] solid slime should fall through liquid
-- [ ] WASM build
 - [ ] destructable terrain
 - [ ] throwable flares
 - [ ] r to reset at any time
@@ -63,6 +63,10 @@ MIT / Apache dual license for source code.
 Assets are public domain.
 
 ## CHANGELOG
+
+### 1.2.0 (post jam)
+
+- Get HTML5 (wasm/WebGL) and native builds both working
 
 ### 1.1.2 (post jam)
 
