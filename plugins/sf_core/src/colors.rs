@@ -12,7 +12,7 @@ impl Default for Colors {
     fn default() -> Self {
         #[cfg(target_arch = "wasm32")]
         return Colors {
-            background: Color::rgb(56. / 255., 33. / 255., 37. / 255.),
+            background: Color::rgb(15. / 255., 10. / 255., 11. / 255.),
             walls: Color::hsla(11., 0.85, 0.56, 1.),
             sand: Color::hsla(163., 0.66, 0.42, 1.),
             blue_sand: Color::hsla(194., 0.66, 0.42, 1.),

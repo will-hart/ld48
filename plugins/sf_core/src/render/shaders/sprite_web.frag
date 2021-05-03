@@ -45,11 +45,7 @@ void main() {
     float dx = grid_x - light_pos.x;
     float dy = grid_y - light_pos.y;
 
-    color.a = 1.0 - clamp(
-        (dx * dx + dy * dy) / (light_strength * light_strength), 
-        0.0, 
-        1.0
-    );
+    color.a = 1.0 - clamp((dx * dx + dy * dy) / (light_strength * light_strength), 0.0, 1.0);
 #endif
 
     o_Target = color;
