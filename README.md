@@ -64,6 +64,10 @@ Assets are public domain.
 
 ## CHANGELOG
 
+### 1.3.0 (post jam)
+
+- A slightly better character controller
+
 ### 1.2.0 (post jam)
 
 - Get HTML5 (wasm/WebGL) and native builds both working
