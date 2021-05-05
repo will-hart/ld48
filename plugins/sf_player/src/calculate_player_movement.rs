@@ -49,6 +49,11 @@ pub fn calculate_player_movement(
             dx *= AIR_SPEED_RATIO;
         }
 
+        if dx == 0. && player.velocity.x.abs() > 0. {
+            // slow down
+            dx = -player.velocity.x.signum();
+        }
+
         let dy = if player.is_grounded {
             if input.jump_pressed && !player.did_jump {
                 // jump
