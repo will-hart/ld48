@@ -44,12 +44,13 @@ cargo make serve
 
 - [x] make lighting a shader
 - [x] HTML5 / WASM / WebGL build
+- [x] ~~physics based character controller~~
+- [x] slightly better character controller
 - [ ] add some more interest in the background
 - [ ] levels loaded from image
 - [ ] procgen levels
 - [ ] jump animations
 - [ ] run animations
-- [ ] physics based character controller
 - [ ] solid slime should fall through liquid
 - [ ] destructable terrain
 - [ ] throwable flares
