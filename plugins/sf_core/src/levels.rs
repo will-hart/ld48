@@ -362,11 +362,7 @@ pub fn spawn_level(
                 pos.1 = level.player_spawn.1;
 
                 tx.translation = dims
-                    .grid_to_world(
-                        level.player_spawn.0,
-                        level.player_spawn.1,
-                        Vec2::new(0., 16.),
-                    )
+                    .grid_to_world(level.player_spawn.0, level.player_spawn.1)
                     .extend(0.);
 
                 player.slime_target = level.player_slime_target;
