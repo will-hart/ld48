@@ -53,18 +53,19 @@ impl Dims {
         )
     }
 
-    pub fn world_to_grid(&self, pos: Vec2) -> Vec2 {
-        Vec2::new(
-            self.tex_w as f32 * (pos.x + (self.win_w as f32) / 2.) / self.win_w as f32,
-            self.tex_h as f32 * (pos.y + (self.win_h as f32) / 2.) / self.win_h as f32,
+    pub fn world_to_grid(&self, pos: Vec2) -> (u32, u32) {
+        (
+            (self.tex_w as f32 * (pos.x + (self.win_w as f32) / 2.) / self.win_w as f32).floor()
+                as u32,
+            (self.tex_h as f32 * (pos.y + (self.win_h as f32) / 2.) / self.win_h as f32).floor()
+                as u32,
         )
     }
 
-    pub fn grid_to_world(&self, x: u32, y: u32, offset: Vec2) -> Vec2 {
-        offset
-            + Vec2::new(
-                (self.win_w as f32) * (x as f32 / self.tex_w as f32) - (self.win_w as f32 / 2.),
-                (self.win_h as f32) * (y as f32 / self.tex_h as f32) - (self.win_h as f32 / 2.),
-            )
+    pub fn grid_to_world(&self, x: u32, y: u32) -> Vec2 {
+        Vec2::new(
+            (self.win_w as f32) * (x as f32 / self.tex_w as f32) - (self.win_w as f32 / 2.),
+            (self.win_h as f32) * (y as f32 / self.tex_h as f32) - (self.win_h as f32 / 2.),
+        )
     }
 }
