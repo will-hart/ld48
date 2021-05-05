@@ -29,7 +29,8 @@ pub fn spawn_player(
         .insert(Timer::from_seconds(0.5, true))
         .insert(Position(player_pos.0, player_pos.1))
         .insert(Player {
-            y_vel: 0,
+            velocity: Vec2::ZERO,
+            move_speed: 200.,
             is_grounded: false,
             frames_since_jumped: 0,
             jump_cooldown: 0,

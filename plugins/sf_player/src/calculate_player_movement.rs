@@ -7,10 +7,11 @@ use sf_core::{
     AudioState, Player, Position,
 };
 
-// TODO: jump acceleration
-const NUM_JUMP_FRAMES: usize = 10;
-const JUMP_SIZE: [u32; NUM_JUMP_FRAMES] = [2, 3, 4, 2, 2, 1, 1, 1, 1, 1];
-const JUMP_COOLDOWN: isize = 12;
+const ACCELERATION: f32 = 7.5;
+const JUMP_SIZE: f32 = 400.;
+const TERMINAL_FALL_VELOCITY: f32 = -450.;
+const UPDATE_RATE: f32 = 1. / 60.;
+const AIR_SPEED_RATIO: f32 = 2.;
 
 pub fn calculate_player_movement(
     time: Res<Time>,
@@ -26,66 +27,82 @@ pub fn calculate_player_movement(
     let t = time.seconds_since_startup();
 
     for (mut player, mut pos, mut tx) in player_query.iter_mut() {
+        // throttle the player controller at approx 60fps
         if t < player.next_update {
             continue;
         }
-        player.next_update = t + (1. / 60.);
+        player.next_update = t + UPDATE_RATE as f64;
 
-        player.is_grounded = !can_move((pos.0 as i32, pos.1 as i32 - 1), &mut map, &particles);
+        let was_grounded = player.is_grounded;
+        player.is_grounded = is_grounded((pos.0, pos.1), &mut map, &particles);
 
-        let dx = if input.left_pressed { -1 } else { 0 } + if input.right_pressed { 1 } else { 0 };
-        let new_x = (pos.0 as i32 + dx).clamp(0, dims.tex_w as i32) as u32;
-
-        // update jumping
-        // TODO: Check up for obstacles
-        if player.is_grounded {
-            if player.frames_since_jumped > 0 {
-                // just landed
-                audio.play_in_channel(asset_server.load("sounds/land.ogg"), &audio_state.channel);
-                player.jump_cooldown = JUMP_COOLDOWN;
-            }
-
-            player.frames_since_jumped = 0;
-            player.jump_cooldown -= 1;
+        if !was_grounded && player.is_grounded {
             player.did_jump = false;
-
-            if input.jump_pressed && player.jump_cooldown < 0 {
-                // just jumped
-                audio.play(asset_server.load("sounds/jump.ogg"));
-                player.jump_cooldown = 0;
-                player.did_jump = true;
-                player.frames_since_jumped = 1;
-                player.y_vel = JUMP_SIZE[0];
-            } else {
-                player.y_vel = 0;
-            }
-        } else {
-            if player.frames_since_jumped > 0
-                && player.did_jump
-                && player.frames_since_jumped < NUM_JUMP_FRAMES
-            {
-                player.y_vel = JUMP_SIZE[player.frames_since_jumped];
-            }
-
-            player.frames_since_jumped += 1;
+            audio.play_in_channel(asset_server.load("sounds/land.ogg"), &audio_state.channel);
         }
 
-        // check for downward movement
-        // TODO: properly account for player sprite size
-        // TODO: Fall damage
-        let new_y = if player.is_grounded { pos.1 } else { pos.1 - 1 } + player.y_vel;
-        player.y_vel = player.y_vel.checked_sub(1).unwrap_or(player.y_vel);
+        // calculate accelerations from inputs
+        let mut dx: f32 =
+            if input.left_pressed { -1. } else { 0. } + if input.right_pressed { 1. } else { 0. };
+        if !player.is_grounded {
+            // slighlty less mobile in the air?
+            dx *= AIR_SPEED_RATIO;
+        }
 
-        // check player can move there
-        if !can_move((new_x as i32, new_y as i32), &mut map, &particles) {
+        let dy = if player.is_grounded {
+            if input.jump_pressed && !player.did_jump {
+                // jump
+                player.did_jump = true;
+                audio.play_in_channel(asset_server.load("sounds/jump.ogg"), &audio_state.channel);
+                JUMP_SIZE
+            } else {
+                // stay on the ground
+                0.
+            }
+        } else {
+            // fall
+            -2.5 * ACCELERATION
+        };
+
+        // calculate velocity
+        let next_vel = Vec2::new(
+            (player.velocity.x + ACCELERATION * dx).clamp(-player.move_speed, player.move_speed),
+            (player.velocity.y + dy).max(TERMINAL_FALL_VELOCITY),
+        );
+
+        let next_world_pos = tx.translation.truncate() + next_vel * UPDATE_RATE;
+
+        let mut next_grid_pos = dims.world_to_grid(next_world_pos);
+        next_grid_pos.1 = next_grid_pos.1.clamp(0, dims.tex_h - 1);
+
+        // check the player can move to the next position
+        // TODO move as far as possible if unable to move here rather than just stopping in place
+        if !can_move(
+            (next_grid_pos.0 as i32, next_grid_pos.1 as i32),
+            &mut map,
+            &particles,
+        ) {
+            // stop
+            player.velocity = Vec2::ZERO;
             continue;
         }
 
-        pos.0 = new_x;
-        pos.1 = new_y;
-
-        tx.translation = dims.grid_to_world(pos.0, pos.1).extend(0.);
+        pos.0 = next_grid_pos.0;
+        pos.1 = next_grid_pos.1;
+        player.velocity = next_vel;
+        tx.translation = next_world_pos.extend(0.0);
     }
+}
+
+/// Returns true if the given position is above "on the ground",
+/// usually meaning the grid square below the passed grid square is occupied
+/// by a barrier.
+fn is_grounded(
+    pos: (u32, u32),
+    map: &mut ResMut<Map>,
+    particles: &Query<(&Particle, Entity)>,
+) -> bool {
+    !can_move((pos.0 as i32, pos.1 as i32 - 1), map, particles)
 }
 
 /// Checks if there is an obstacle at the given position + movement
